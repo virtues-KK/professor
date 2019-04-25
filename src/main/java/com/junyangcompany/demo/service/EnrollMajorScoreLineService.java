@@ -1,0 +1,12 @@
+package com.junyangcompany.demo.service;
+
+import com.junyangcompany.demo.entity.EnrollMajorScoreLine;
+import com.junyangcompany.demo.entity.EnrollStudentPlan;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public interface EnrollMajorScoreLineService {
+    List<EnrollMajorScoreLine> getAllEnrollMajorScoreLine(EnrollStudentPlan enrollStudentPlan);
+}
