@@ -1,11 +1,10 @@
 package com.junyangcompany.demo.controller;
 
-import com.junyangcompany.demo.bean.CollegeProbability;
-import com.junyangcompany.demo.bean.ProfessionalBean;
-import com.junyangcompany.demo.bean.QueryEnrollCollegeCondition;
-import com.junyangcompany.demo.bean.QueryEnrollCollegeMajorBean;
+import com.junyangcompany.demo.bean.*;
 import com.junyangcompany.demo.entity.*;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
+import com.junyangcompany.demo.entity.professerEntity.ProfessionalBean;
+import com.junyangcompany.demo.entity.professerEntity.QueryEnrollCollegeMajorBean_demo;
 import com.junyangcompany.demo.repository.EnrollCollegeEnrollBatchRepo;
 import com.junyangcompany.demo.repository.EnrollCollegeScoreLineRepo;
 import com.junyangcompany.demo.service.CollegeProbabilityService;
@@ -14,11 +13,8 @@ import com.junyangcompany.demo.service.EnrollMajorScoreLineService;
 import com.junyangcompany.demo.service.EnrollStudentPlanService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.*;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -83,7 +79,7 @@ public class CollegeQueryController {
     @PostMapping(
             value = "/professionCollege"
     )
-    public ResponseEntity<List<ProfessionalBean>> professionCollege(@RequestBody ProfessionalBean collegeCondition,Sort sort) {
+    public Page<List<ProfessionalBean>> professionCollege(@RequestBody ProfessionalBean collegeCondition, Pageable pageable) {
         List<ProfessionalBean> professionalBeans = new ArrayList<>();
         List<CollegeProbability> collegeProbabilities = collegeProbabilityService.getAll(collegeCondition.getProvinceId(), collegeCondition.getScienceAndArt() ? ScienceAndArt.理科 : ScienceAndArt.文科, collegeCondition.getSeq(), null, false);
 
@@ -128,25 +124,26 @@ public class CollegeQueryController {
                     professionalBean.getBatchName().equals(collegeCondition.getBatchName())
             ).collect(Collectors.toList());
         }
-        if (collegeCondition.getLevels() != null && collegeCondition.getLevels().size() !=0 ){
+        if (collegeCondition.getLevels() != null && collegeCondition.getLevels().size() != 0) {
             professionalBeans = professionalBeans.stream().filter(
                     professionalBean ->
                             professionalBean.getLevels().size() != 0 &&
                                     professionalBean.getLevels().containsAll(collegeCondition.getLevels())
             ).collect(Collectors.toList());
         }
-        if (collegeCondition.getMaxRank() != null ){
+        if (collegeCondition.getMaxRank() != null) {
             professionalBeans = professionalBeans.stream().filter(professionalBean -> collegeCondition.getMaxRank() > professionalBean.getRank() && collegeCondition.getMinRank() < professionalBean.getRank()
             ).collect(Collectors.toList());
         }
-        if (collegeCondition.getMaxProbability() !=null){
+        if (collegeCondition.getMaxProbability() != null) {
             professionalBeans = professionalBeans.stream().filter(professionalBean ->
                     professionalBean.getProbability() < collegeCondition.getMaxProbability()
-                    && professionalBean.getProbability() > collegeCondition.getMinProbability()
-                    ).collect(Collectors.toList());
+                            && professionalBean.getProbability() > collegeCondition.getMinProbability()
+            ).collect(Collectors.toList());
         }
         Collections.sort(professionalBeans);
-        return ResponseEntity.ok(professionalBeans);
+        PageImpl lists = new PageImpl(professionalBeans, pageable, professionalBeans.size());
+        return lists;
     }
 
     @PostMapping(
@@ -157,16 +154,16 @@ public class CollegeQueryController {
     }
 
     @PostMapping("majors")
-    public Page<List<List<QueryEnrollCollegeMajorBean>>> getAllMajors(@RequestBody List<EnrollCollegeEnrollBatch> list, Pageable pageable){
+    public Page<List<List<QueryEnrollCollegeMajorBean>>> getAllMajors(@RequestBody List<EnrollCollegeEnrollBatch> list, Pageable pageable) {
         List<List<QueryEnrollCollegeMajorBean>> lists = new ArrayList<>();
         List<QueryEnrollCollegeMajorBean> queryEnrollCollegeMajorBeans = new ArrayList<>();
         QueryEnrollCollegeMajorBean queryEnrollCollegeMajorBean = new QueryEnrollCollegeMajorBean();
         list.forEach(enrollCollegeEnrollBatch -> {
             List<EnrollStudentPlan> allEnrollCollege = enrollStudentPlanService.getAllEnrollCollege(enrollCollegeEnrollBatch);
             allEnrollCollege.forEach(enrollStudentPlan -> {
-                BeanUtils.copyProperties(enrollStudentPlan,queryEnrollCollegeMajorBean);
+                BeanUtils.copyProperties(enrollStudentPlan, queryEnrollCollegeMajorBean);
                 enrollMajorScoreLineService.getAllEnrollMajorScoreLine(enrollStudentPlan).forEach(enrollMajorScoreLine -> {
-                    BeanUtils.copyProperties(enrollMajorScoreLine,queryEnrollCollegeMajorBean);
+                    BeanUtils.copyProperties(enrollMajorScoreLine, queryEnrollCollegeMajorBean);
                     queryEnrollCollegeMajorBeans.add(queryEnrollCollegeMajorBean);
                 });
             });
@@ -174,5 +171,10 @@ public class CollegeQueryController {
         });
         PageImpl<List<List<QueryEnrollCollegeMajorBean>>> lists1 = new PageImpl(lists, pageable, lists.size());
         return lists1;
+    }
+
+    @GetMapping("major")
+    public Slice<List<QueryEnrollCollegeMajorBean_demo>> demo(@PageableDefault(value = 3, sort = "maxScore", direction = Sort.Direction.ASC) Pageable pageable, @RequestParam List<Long> list) {
+        return enrollMajorScoreLineService.getMajorScoreLine(list, pageable);
     }
 }

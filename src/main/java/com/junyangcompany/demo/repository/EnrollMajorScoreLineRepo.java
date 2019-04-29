@@ -1,7 +1,10 @@
 package com.junyangcompany.demo.repository;
 
+import com.junyangcompany.demo.entity.professerEntity.QueryEnrollCollegeMajorBean_demo;
 import com.junyangcompany.demo.entity.EnrollMajorScoreLine;
 import com.junyangcompany.demo.entity.EnrollStudentPlan;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -10,14 +13,43 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface EnrollMajorScoreLineRepo extends JpaRepository<EnrollMajorScoreLine,Long>, JpaSpecificationExecutor<EnrollMajorScoreLine> {
+public interface EnrollMajorScoreLineRepo extends JpaRepository<EnrollMajorScoreLine, Long>, JpaSpecificationExecutor<EnrollMajorScoreLine> {
+
+    // 根据 enrollCollegeEnrollBatch 查询enrollStudentPlan 和 enrollMajorScoreLine
+    @Query(value = "select new com.junyangcompany.demo.bean.QueryEnrollCollegeMajorBean_demo(a.maxScore,a.minScore,a.minRank,a.averageScore,a.enrollCount,a.scoreLineDiff,a.year,a.price,a.name,b.yearOfStudy,b.enrollBatch)" +
+            " from EnrollMajorScoreLine as a left join EnrollStudentPlan b on a.enrollStudentPlan = b.id where b.id in (select b.id from EnrollStudentPlan where enrollCollegeEnrollBatch.id in ?1 )")
+    Slice<List<QueryEnrollCollegeMajorBean_demo>> getMajorScoreLine(List<Long> enrollCollegeEnrollBatch, Pageable pageable);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     @Query(value = "SELECT min_rank,min_score FROM enroll_major_score_line WHERE " +
             "YEAR= :year " +
             "AND enroll_student_plan_id= :enrollStudentPlanId "
-            ,nativeQuery = true)
-    List<Object []> queryEnrollMajorScoreLine(@Param("year") Integer year,
-                                              @Param("enrollStudentPlanId") Long enrollStudentPlanId);
+            , nativeQuery = true)
+    List<Object[]> queryEnrollMajorScoreLine(@Param("year") Integer year,
+                                             @Param("enrollStudentPlanId") Long enrollStudentPlanId);
 
     List<EnrollMajorScoreLine> findByEnrollStudentPlan_IdAndYearGreaterThan(Long enrollStudentPlanId, Integer year, Sort sort);
 
@@ -28,7 +60,6 @@ public interface EnrollMajorScoreLineRepo extends JpaRepository<EnrollMajorScore
     List<EnrollMajorScoreLine> findNotContainYearEnrollMajorScoreLine(@Param("enrollStudentPlanId") Long enrollStudentPlanId, @Param("queryYear") Integer queryYear, @Param("thisYear") Integer thisYear);
 
     /**
-     *
      * 功能描述: 包含当年的招生专业分数线数据
      *
      * @param:
@@ -38,7 +69,8 @@ public interface EnrollMajorScoreLineRepo extends JpaRepository<EnrollMajorScore
      */
     @Query("from EnrollMajorScoreLine p where p.enrollStudentPlan.id = :enrollStudentPlanId  and p.year >= :queryYear order by p.year desc, p.minScore desc")
     List<EnrollMajorScoreLine> findContainYearEnrollMajorScoreLine(@Param("enrollStudentPlanId") Long enrollStudentPlanId, @Param("queryYear") Integer queryYear);
-//    /**
+
+    //    /**
 //     * 院校详情下面的专业分数线-ldx
 //     * 2018-12-12
 //     */
@@ -70,7 +102,7 @@ public interface EnrollMajorScoreLineRepo extends JpaRepository<EnrollMajorScore
 //        return this.findAll(specification, pageable);
 //    }
     //查询招生专业历年的分数
-    List <EnrollMajorScoreLine> findAllByEnrollStudentPlan_IdAndYearBetween(Long enrollStudentPlanId, Integer maxYear, Integer minYear);
+    List<EnrollMajorScoreLine> findAllByEnrollStudentPlan_IdAndYearBetween(Long enrollStudentPlanId, Integer maxYear, Integer minYear);
 
-    List <EnrollMajorScoreLine> findByEnrollStudentPlan_Id(Long enrollStudentPlanId, Sort sort);
+    List<EnrollMajorScoreLine> findByEnrollStudentPlan_Id(Long enrollStudentPlanId, Sort sort);
 }

@@ -1,10 +1,13 @@
 package com.junyangcompany.demo.service.impl;
 
+import com.junyangcompany.demo.entity.professerEntity.QueryEnrollCollegeMajorBean_demo;
 import com.junyangcompany.demo.entity.EnrollMajorScoreLine;
 import com.junyangcompany.demo.entity.EnrollStudentPlan;
 import com.junyangcompany.demo.repository.EnrollMajorScoreLineRepo;
 import com.junyangcompany.demo.service.EnrollMajorScoreLineService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,5 +30,11 @@ public class EnrollMajorScoreLineServiceImpl implements EnrollMajorScoreLineServ
     @Override
     public List<EnrollMajorScoreLine> getAllEnrollMajorScoreLine(EnrollStudentPlan enrollStudentPlan) {
         return enrollMajorScoreLineRepo.findByEnrollStudentPlan(enrollStudentPlan);
+    }
+
+
+    @Override
+    public Slice<List<QueryEnrollCollegeMajorBean_demo>> getMajorScoreLine(List<Long> enrollStudentId, Pageable pageable) {
+        return enrollMajorScoreLineRepo.getMajorScoreLine(enrollStudentId,pageable);
     }
 }

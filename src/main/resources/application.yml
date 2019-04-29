@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://192.168.1.142:3306/zhiyaun_professor?useSSL=false&characterEncoding=utf8&serverTimezone=UTC
+    url: jdbc:mysql://192.168.1.142:3306/professordb?useSSL=false&characterEncoding=utf8&serverTimezone=UTC
     username: root
     password: root
   jpa:
@@ -11,6 +11,9 @@ spring:
     host: smtp.163.com
     username: m15570719300@163.com
     password: pl123456
+    web:
+      pageable:
+        max-page-size: 20
 jwt:
   secret: panle
   expiration: 604800

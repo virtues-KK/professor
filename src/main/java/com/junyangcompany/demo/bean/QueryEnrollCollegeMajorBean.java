@@ -26,6 +26,7 @@ import javax.persistence.ManyToOne;
 @AllArgsConstructor
 public class QueryEnrollCollegeMajorBean {
 
+
     private String EnrollCollegeName;
 
     /**
@@ -45,29 +46,29 @@ public class QueryEnrollCollegeMajorBean {
     /**
      * 最高分
      */
-    private Integer maxScore;
+    private Integer max_score;
 
     /**
      * 最低分
      */
-    private Integer minScore;
+    private Integer min_score;
 
     /**
      * 最低位次
      */
-    private Integer minRank;
+    private Integer min_rank;
     /**
      * 平均分
      */
-    private Double averageScore;
+    private Double average_score;
     /**
      * 录取人数
      */
-    private Integer enrollCount;
+    private Integer enroll_count;
     /**
      * 线差
      */
-    private Integer scoreLineDiff;
+    private Integer score_line_diff;
 
     private EnrollBatch enrollBatch;
 
@@ -79,10 +80,10 @@ public class QueryEnrollCollegeMajorBean {
     /**
      * 学年
      */
-    private Integer yearOfStudy;
+    private Integer year_of_study;
 
     @Enumerated
-    private ScienceAndArt scienceArt;
+    private ScienceAndArt science_art;
 
     @Enumerated
     private Grade grade;
@@ -90,6 +91,8 @@ public class QueryEnrollCollegeMajorBean {
     @ManyToOne
     @JoinColumn
     private Province province;
+
+    private Long province_id;
 
     /**
      * 学费
@@ -100,5 +103,7 @@ public class QueryEnrollCollegeMajorBean {
      * 年份
      */
     private Integer year;
+
+
 
 }

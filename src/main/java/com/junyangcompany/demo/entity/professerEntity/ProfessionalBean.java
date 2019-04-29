@@ -1,4 +1,4 @@
-package com.junyangcompany.demo.bean;
+package com.junyangcompany.demo.entity.professerEntity;
 
 import com.junyangcompany.demo.entity.EnrollCollegeEnrollBatch;
 import com.junyangcompany.demo.entity.EnrollStudentPlan;
@@ -6,7 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.ManyToOne;
 import java.util.List;
+
+/**
+ * 生涯测评师初选结果
+ */
 
 @Data
 @NoArgsConstructor
@@ -46,6 +51,13 @@ public class ProfessionalBean implements Comparable<ProfessionalBean> {
     private List<String> levels;
 
    private List<PlanLine> planLInes;
+
+    /**
+     * 考生信息
+     */
+   @ManyToOne
+   private Examinee examinee;
+
 
     /**
      * Compares this object with the specified object for order.  Returns a
