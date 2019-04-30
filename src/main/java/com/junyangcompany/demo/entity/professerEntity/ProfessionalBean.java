@@ -1,12 +1,14 @@
 package com.junyangcompany.demo.entity.professerEntity;
 
+import com.junyangcompany.demo.bean.UserInfo;
+import com.junyangcompany.demo.entity.CollegeLevel;
 import com.junyangcompany.demo.entity.EnrollCollegeEnrollBatch;
 import com.junyangcompany.demo.entity.EnrollStudentPlan;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 import java.util.List;
 
 /**
@@ -16,9 +18,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 public class ProfessionalBean implements Comparable<ProfessionalBean> {
 
-    private EnrollCollegeEnrollBatch enrollCollegeEnrollBatch;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Long enrollCollegeEnrollBatch;
 
     private Long seq; // 位次
 
@@ -32,7 +39,8 @@ public class ProfessionalBean implements Comparable<ProfessionalBean> {
 
     private String collegeCode;
 
-    private List<CollegeLine> collegeLines;
+    @OneToMany
+    private  List<CollegeLine> collegeLines;
 
     private Integer probability;
 
@@ -42,21 +50,24 @@ public class ProfessionalBean implements Comparable<ProfessionalBean> {
 
     private String type;
 
+    @Column(name = "ranker")
     private Integer rank;
 
     private Integer minRank;
 
     private Integer maxRank;
 
-    private List<String> levels;
+    @OneToMany
+    private List<CollegeLevel> levels;
 
+    @OneToMany
    private List<PlanLine> planLInes;
 
     /**
      * 考生信息
      */
-   @ManyToOne
-   private Examinee examinee;
+//   @ManyToOne(fetch = FetchType.LAZY)
+//   private Examinee examinee;
 
 
     /**
@@ -102,19 +113,6 @@ public class ProfessionalBean implements Comparable<ProfessionalBean> {
         return this.getRank().compareTo(o.getRank());
     }
 
-    public class CollegeLine
-    {
-        public Integer minScore;
-        public Integer minRank;
-        public Integer enrollCount;
-        public Integer year;
-    }
-    public class PlanLine
-    {
-        public EnrollStudentPlan enrollStudentPlan;
-        public  List<CollegeLine> collegeLines;
-    }
-
-
-
 }
+
+

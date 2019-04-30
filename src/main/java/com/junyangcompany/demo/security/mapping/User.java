@@ -1,8 +1,10 @@
 package com.junyangcompany.demo.security.mapping;
 
+import com.junyangcompany.demo.entity.professerEntity.Examinee;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
@@ -35,5 +37,9 @@ public class User {
     private String email;
 
     private Boolean isValid;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private List<Examinee> examinees;
 
 }

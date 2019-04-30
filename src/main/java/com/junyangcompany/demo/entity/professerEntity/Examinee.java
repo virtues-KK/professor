@@ -1,8 +1,8 @@
 package com.junyangcompany.demo.entity.professerEntity;
 
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
+import com.junyangcompany.demo.security.mapping.User;
 import lombok.Data;
-import org.hibernate.annotations.Fetch;
 
 import javax.persistence.*;
 import java.util.List;
@@ -41,12 +41,19 @@ public class Examinee {
      * 测评师初选结果
      */
     @OneToMany(fetch = FetchType.LAZY)
-    private List<ProfessionalBean> professionalBean;
+    @JoinColumn(name = "professionalBean_id")
+    private List<ProfessionalBean> professionalBeans;
 
     /**
      * 测评师精选结果
      */
     @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "queryEnrollCollegeMajorBean_id")
     private List<QueryEnrollCollegeMajorBean_demo> queryEnrollCollegeMajorBeanDemos;
 
+    /**
+     * 当前用户信息
+     */
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User user;
 }

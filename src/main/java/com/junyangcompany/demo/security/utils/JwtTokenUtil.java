@@ -1,9 +1,12 @@
 package com.junyangcompany.demo.security.utils;
 
 import com.junyangcompany.demo.security.config.JwtUser;
+import com.junyangcompany.demo.security.mapping.User;
+import com.junyangcompany.demo.security.repository.UserRepo;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -20,6 +23,8 @@ import java.util.Map;
 @Component
 public class JwtTokenUtil implements Serializable {
 
+    private final UserRepo userRepo;
+
     private static final long serialVersionUID = -3301605591108950415L;
 
     private static final String CLAIM_KEY_USERNAME = "sub";
@@ -31,6 +36,11 @@ public class JwtTokenUtil implements Serializable {
     @Value("${jwt.expiration}")
     private Long expiration;
 
+    @Autowired
+    public JwtTokenUtil(UserRepo userRepo) {
+        this.userRepo = userRepo;
+    }
+
     public String getUsernameFromToken(String token) {
         String username;
         try {
@@ -40,6 +50,16 @@ public class JwtTokenUtil implements Serializable {
             username = null;
         }
         return username;
+    }
+
+    /**
+     * get user object from token
+     * @param token
+     * @return
+     */
+    public User getUserFromToken(String token){
+        String usernameFromToken = this.getUsernameFromToken(token);
+        return userRepo.findByUsername(usernameFromToken);
     }
 
     private Date getCreatedDateFromToken(String token) {

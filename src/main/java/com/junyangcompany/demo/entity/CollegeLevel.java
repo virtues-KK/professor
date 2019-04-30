@@ -1,5 +1,6 @@
 package com.junyangcompany.demo.entity;
 
+import com.junyangcompany.demo.entity.professerEntity.ProfessionalBean;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -8,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.Cacheable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 
 @Data
 @Entity
@@ -21,6 +23,9 @@ public class CollegeLevel implements Comparable<CollegeLevel> {
     private Long id;
 
     private String name;
+
+    @ManyToOne
+    private ProfessionalBean professionalBean;
 
     @Override
     public int compareTo(CollegeLevel o) {

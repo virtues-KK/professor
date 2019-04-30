@@ -41,7 +41,7 @@ public class LoginController {
 
     @GetMapping("/emailCheck/{string}")
     public ResponseEntity EmailCheck(@PathVariable String string) throws Exception {
-        String username = URLDecoder.decode(string, "GBK");
+        String username = URLDecoder.decode(string, "UTF-8");
         return authService.checkEmail(username);
     }
 

@@ -16,7 +16,7 @@ import java.util.List;
 public interface EnrollMajorScoreLineRepo extends JpaRepository<EnrollMajorScoreLine, Long>, JpaSpecificationExecutor<EnrollMajorScoreLine> {
 
     // 根据 enrollCollegeEnrollBatch 查询enrollStudentPlan 和 enrollMajorScoreLine
-    @Query(value = "select new com.junyangcompany.demo.bean.QueryEnrollCollegeMajorBean_demo(a.maxScore,a.minScore,a.minRank,a.averageScore,a.enrollCount,a.scoreLineDiff,a.year,a.price,a.name,b.yearOfStudy,b.enrollBatch)" +
+    @Query(value = "select new com.junyangcompany.demo.entity.professerEntity.QueryEnrollCollegeMajorBean_demo(a.maxScore,a.minScore,a.minRank,a.averageScore,a.enrollCount,a.scoreLineDiff,a.year,a.price,a.name,b.yearOfStudy,b.enrollBatch)" +
             " from EnrollMajorScoreLine as a left join EnrollStudentPlan b on a.enrollStudentPlan = b.id where b.id in (select b.id from EnrollStudentPlan where enrollCollegeEnrollBatch.id in ?1 )")
     Slice<List<QueryEnrollCollegeMajorBean_demo>> getMajorScoreLine(List<Long> enrollCollegeEnrollBatch, Pageable pageable);
 

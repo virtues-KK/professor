@@ -52,8 +52,7 @@ public class AuthService {
 
     private final PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private MailService mailService;
+    private final MailService mailService;
 
     @Autowired
     public AuthService(
@@ -61,16 +60,23 @@ public class AuthService {
             UserDetailsService userDetailsService,
             JwtTokenUtil jwtTokenUtil,
             UserRepo userRepository,
-            RoleRepo roleRepository, PasswordEncoder passwordEncoder) {
+            RoleRepo roleRepository, PasswordEncoder passwordEncoder, MailService mailService) {
         this.authenticationManager = authenticationManager;
         this.userDetailsService = userDetailsService;
         this.jwtTokenUtil = jwtTokenUtil;
         this.userRepository = userRepository;
         this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
+        this.mailService = mailService;
     }
 
     public ResponseEntity<?> register(User userToAdd) throws Exception {
+        if (Objects.nonNull(userToAdd) && userToAdd.getPassword().length() != 6){
+            return new ResponseEntity<>(
+                    "密码必须是6位",
+                    HttpStatus.FORBIDDEN
+            );
+        }
         if (Objects.nonNull(userRepository.findByUsername(userToAdd.getUsername()))) {
             return new ResponseEntity<>(
                     "昵称重复注册",
@@ -80,6 +86,12 @@ public class AuthService {
         if (Objects.nonNull(userRepository.findByEmail(userToAdd.getEmail()))) {
             return new ResponseEntity<>(
                     "邮箱重复注册",
+                    HttpStatus.FORBIDDEN
+            );
+        }
+        if (!userToAdd.getEmail().endsWith("@junyanginfo.com")){
+            return new ResponseEntity<>(
+                    "请使用公司邮箱注册",
                     HttpStatus.FORBIDDEN
             );
         }
@@ -95,7 +107,7 @@ public class AuthService {
         String contents = AESUtil.byte2Base64(AESUtil.encryptAES(userToAdd.getUsername().getBytes(), secretKey));
         String con = genKeyAES + "2308" + contents;
         URLEncoder.encode(con,"GBK");
-        String gbk = URLEncoder.encode(userToAdd.getUsername(), "GBK");
+        String gbk = URLEncoder.encode(userToAdd.getUsername(), "UTF-8");
         String content = "<html>" +
                 "<head>" +
                 "</head>" +
@@ -107,7 +119,7 @@ public class AuthService {
         email email = com.junyangcompany.demo.security.mapping.email.builder()
                 .userEmail(userToAdd.getEmail())
                 .content(content)
-                .subject("激活邮件")
+                .subject("亲爱的,你好!")
                 .build();
         mailService.send(email);
         try {

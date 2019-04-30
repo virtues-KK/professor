@@ -8,8 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 /**
  * author:pan le
@@ -18,9 +17,13 @@ import javax.persistence.ManyToOne;
  *  生涯测评师精选结果
  */
 @Data
-@Builder
 @NoArgsConstructor
+@Entity
 public class QueryEnrollCollegeMajorBean_demo {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     /**
      * 最高分
@@ -66,8 +69,8 @@ public class QueryEnrollCollegeMajorBean_demo {
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private EnrollBatch enrollBatch;
 
-    @ManyToOne
-    private Examinee examinee;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    private Examinee examinee;
 
     public QueryEnrollCollegeMajorBean_demo(Integer maxScore, Integer minScore, Integer minRank, Double averageScore, Integer enrollCount, Integer scoreLineDiff, Integer year, String price, String name, Integer yearOfStudy, EnrollBatch enrollBatch) {
         this.maxScore = maxScore;
