@@ -13,4 +13,5 @@ public interface UserRepo extends JpaRepository<User,Long> {
     @Modifying
     @Query(value = "update user set is_valid = true where username = ?1 ",nativeQuery = true)
     void updateUserInformation(String username);
+
 }

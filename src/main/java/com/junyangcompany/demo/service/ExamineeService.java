@@ -1,16 +1,15 @@
 package com.junyangcompany.demo.service;
 
 import com.junyangcompany.demo.entity.professerEntity.Examinee;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Service;
 
-@Service
+import javax.servlet.http.HttpServletRequest;
+
 public interface ExamineeService {
     /**
      * 添加考生用户
      * @param examinee
      */
-    ResponseEntity addExaminee(Examinee examinee);
+    Examinee addExaminee(Examinee examinee, HttpServletRequest httpServletRequest);
 
     /**
      * 删除考生用户

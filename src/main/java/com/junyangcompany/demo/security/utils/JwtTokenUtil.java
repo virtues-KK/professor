@@ -11,10 +11,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * Created by Yuicon on 2017/5/14.
@@ -54,12 +56,25 @@ public class JwtTokenUtil implements Serializable {
 
     /**
      * get user object from token
-     * @param token
+     *
+     * @param
      * @return
      */
-    public User getUserFromToken(String token){
-        String usernameFromToken = this.getUsernameFromToken(token);
-        return userRepo.findByUsername(usernameFromToken);
+    public User getUserFromToken(HttpServletRequest httpServletRequest) {
+        String authorization = httpServletRequest.getHeader("Authorization");
+        String usernameFromToken = "usernameFromToken";
+        if (Objects.nonNull(authorization) && authorization.length() >= 15) {
+            usernameFromToken = this.getUsernameFromToken(authorization.substring(12));
+        }
+        User user;
+        try {
+            user = userRepo.findByUsername(usernameFromToken);
+            user.getUsername();
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException("查找用户信息异常");
+        }
+        return user;
     }
 
     private Date getCreatedDateFromToken(String token) {

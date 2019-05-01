@@ -1,5 +1,6 @@
 package com.junyangcompany.demo.entity.professerEntity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import com.junyangcompany.demo.security.mapping.User;
 import lombok.Data;
@@ -42,6 +43,7 @@ public class Examinee {
      */
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "professionalBean_id")
+    @JsonIgnore
     private List<ProfessionalBean> professionalBeans;
 
     /**
@@ -49,11 +51,13 @@ public class Examinee {
      */
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "queryEnrollCollegeMajorBean_id")
+    @JsonIgnore
     private List<QueryEnrollCollegeMajorBean_demo> queryEnrollCollegeMajorBeanDemos;
 
     /**
      * 当前用户信息
      */
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private User user;
 }
