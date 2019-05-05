@@ -25,16 +25,10 @@ public class ExamineeController {
 
     private final JwtTokenUtil jwtTokenUtil;
 
-    private final ExamineeRepo examineeRepo;
-
-    private final UserRepo userRepo;
-
     @Autowired
-    public ExamineeController(ExamineeService examineeService, JwtTokenUtil jwtTokenUtil, ExamineeRepo examineeRepo, UserRepo userRepo) {
+    public ExamineeController(ExamineeService examineeService, JwtTokenUtil jwtTokenUtil) {
         this.examineeService = examineeService;
         this.jwtTokenUtil = jwtTokenUtil;
-        this.examineeRepo = examineeRepo;
-        this.userRepo = userRepo;
     }
 
     @PostMapping("add")
@@ -48,4 +42,10 @@ public class ExamineeController {
         List<Examinee> examinees = user.getExaminees();
         return examinees;
     }
+
+    @PostMapping("delete")
+    public void delete(@RequestBody List<Examinee> examinees){
+        examineeService.deleteExaminee(examinees);
+    }
+
 }

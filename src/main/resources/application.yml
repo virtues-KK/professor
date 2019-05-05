@@ -11,9 +11,6 @@ spring:
     host: smtp.qq.com
     username: 1101029203@qq.com
     password: yezssrffpkucjdfj
-    web:
-      pageable:
-        max-page-size: 20
 jwt:
   secret: panle
   expiration: 604800

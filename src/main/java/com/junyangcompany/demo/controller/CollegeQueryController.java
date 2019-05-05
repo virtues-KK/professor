@@ -2,10 +2,7 @@ package com.junyangcompany.demo.controller;
 
 import com.junyangcompany.demo.bean.CollegeProbability;
 import com.junyangcompany.demo.bean.QueryEnrollCollegeCondition;
-import com.junyangcompany.demo.entity.CollegeLevel;
-import com.junyangcompany.demo.entity.EnrollCollege;
-import com.junyangcompany.demo.entity.EnrollCollegeEnrollBatch;
-import com.junyangcompany.demo.entity.EnrollCollegeScoreLine;
+import com.junyangcompany.demo.entity.*;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import com.junyangcompany.demo.entity.professerEntity.CollegeLine;
 import com.junyangcompany.demo.entity.professerEntity.ProfessionalBean;
@@ -16,12 +13,16 @@ import com.junyangcompany.demo.service.CollegeProbabilityService;
 import com.junyangcompany.demo.service.EnrollCollegeService;
 import com.junyangcompany.demo.service.EnrollMajorScoreLineService;
 import com.junyangcompany.demo.service.EnrollStudentPlanService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
  * Date:2019/4/16
  * Time:22:14
  */
+@Slf4j
 @RestController
 @RequestMapping("college")
 public class CollegeQueryController {
@@ -63,9 +65,10 @@ public class CollegeQueryController {
             List<EnrollCollegeEnrollBatch> enrollCollegeEnrollBatches = enrollCollegeEnrollBatchRepo.findAll();
             for (EnrollCollegeEnrollBatch enrollCollegeEnrollBatch : enrollCollegeEnrollBatches) {
                 String name = enrollCollegeEnrollBatch.getEnrollCollege().getName();
-                String name1 = enrollCollegeEnrollBatch.getEnrollBatch().getName();
+                ArrayList<EnrollBatch> strings = new ArrayList<>();
+                strings.add(enrollCollegeEnrollBatch.getEnrollBatch());
                 ProfessionalBean professionalBean = new ProfessionalBean();
-                professionalBean.setBatchName(name1);
+                professionalBean.setBatchNames(strings);
                 professionalBean.setCollegeName(name);
                 professionalBean.setCollegeCode(enrollCollegeEnrollBatch.getEnrollCollege().getCode());
                 EnrollCollege enrollCollege = enrollCollegeEnrollBatch.getEnrollCollege();
@@ -80,9 +83,24 @@ public class CollegeQueryController {
         return enrollCollegeEnrollBatchMap;
     }
 
+    /**
+     * 定义全局静态返回大学数据
+     */
+    private static List<ProfessionalBean> professionalBeans_static = new ArrayList<>();
+
+    @PostMapping("search")
+    public List<ProfessionalBean> searchCollege(@RequestBody ProfessionalBean professionalBean_) {
+        log.info(String.valueOf(professionalBeans_static.size()));
+        return professionalBeans_static.stream().filter(professionalBean ->
+                professionalBean.getCollegeName().contains(professionalBean_.getCollegeName())
+        ).collect(Collectors.toList());
+    }
+
+
     @PostMapping(
             value = "/professionCollege"
     )
+//    public Page<List<ProfessionalBean>> professionCollege(@RequestBody ProfessionalBean collegeCondition, Pageable pageable) {
     public Page<List<ProfessionalBean>> professionCollege(@RequestBody ProfessionalBean collegeCondition, Pageable pageable) {
         List<ProfessionalBean> professionalBeans = new ArrayList<>();
         List<CollegeProbability> collegeProbabilities = collegeProbabilityService.getAll(collegeCondition.getProvinceId(),
@@ -96,7 +114,7 @@ public class CollegeQueryController {
             professionalBean.setProbability(collegeProbability.getProbalility());
             ProfessionalBean professionalBean1 = getEnrollCollegeEnrollBatchMap().get(bid);
             //professionalBean.setEnrollCollegeEnrollBatch(enrollCollegeEnrollBatch);
-            professionalBean.setBatchName(professionalBean1.getBatchName());
+            professionalBean.setBatchNames(professionalBean1.getBatchNames());
             professionalBean.setCollegeName(professionalBean1.getCollegeName());
             professionalBean.setCollegeCode(professionalBean1.getCollegeCode());
             List<EnrollCollegeScoreLine> enrollCollegeScoreLines = enrollCollegeScoreLineRepo.findByyearAndEnrollCollegeEnrollBatch(collegeCondition.getScienceAndArt() ? ScienceAndArt.理科 : ScienceAndArt.文科,
@@ -119,14 +137,29 @@ public class CollegeQueryController {
             professionalBean.setScienceAndArt(collegeCondition.getScienceAndArt());
             professionalBean.setSeq(collegeCondition.getSeq());
         }
+        professionalBeans_static = professionalBeans;
         if (collegeCondition.getType() != null && !collegeCondition.getType().equals("")) {
             professionalBeans = professionalBeans.stream().filter(professionalBean ->
                     professionalBean.getType().equals(collegeCondition.getType())
             ).collect(Collectors.toList());
         }
-        if (collegeCondition.getBatchName() != null && !collegeCondition.getBatchName().equals("")) {
+
+        // 在选择批次的时候,不能做比较,只能确定某些批次来筛选
+        if (collegeCondition.getBatchNames().size() != 0) {
+
+            professionalBeans.stream().forEach(professionalBean -> {
+                List<String> collect = professionalBean.getBatchNames().stream().map(EnrollBatch::getName).collect(Collectors.toList());
+                log.info(String.valueOf(collect.size()));
+                collect.forEach(c->{
+                    log.info(c);
+                });
+            });
+            collegeCondition.getBatchNames().stream().map(EnrollBatch::getName).collect(Collectors.toList()).forEach(c->{
+                System.out.println(c);
+            });
             professionalBeans = professionalBeans.stream().filter(professionalBean ->
-                    professionalBean.getBatchName().equals(collegeCondition.getBatchName())
+                            collegeCondition.getBatchNames().stream().map(EnrollBatch::getName).collect(Collectors.toList())
+                            .containsAll(professionalBean.getBatchNames().stream().map(EnrollBatch::getName).collect(Collectors.toList()))
             ).collect(Collectors.toList());
         }
         //turn list<String> to list<collegeLevel>
@@ -147,8 +180,8 @@ public class CollegeQueryController {
                             && professionalBean.getProbability() > collegeCondition.getMinProbability()
             ).collect(Collectors.toList());
         }
-        Collections.sort(professionalBeans);
-        PageImpl lists = new PageImpl(professionalBeans, pageable, professionalBeans.size());
+        log.info(String.valueOf(professionalBeans.size()));
+        Page lists = new PageImpl(professionalBeans, pageable, professionalBeans.size());
         return lists;
     }
 
@@ -182,5 +215,18 @@ public class CollegeQueryController {
     @GetMapping("major")
     public Slice<List<QueryEnrollCollegeMajorBean_demo>> demo(@PageableDefault(value = 3, sort = "maxScore", direction = Sort.Direction.ASC) Pageable pageable, @RequestParam List<Long> list) {
         return enrollMajorScoreLineService.getMajorScoreLine(list, pageable);
+    }
+
+    /**
+     * 查询大学简单专业名称
+     *
+     * @param enrollCollegeEnrollBatchId
+     * @return
+     */
+    @GetMapping(
+            value = "getMajorName/{id}"
+    )
+    public List<String> queryMajorsName(@PathVariable("id") Long enrollCollegeEnrollBatchId) {
+        return enrollStudentPlanService.getEnrollMajorName(enrollCollegeEnrollBatchId);
     }
 }

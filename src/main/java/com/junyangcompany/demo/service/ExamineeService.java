@@ -3,6 +3,7 @@ package com.junyangcompany.demo.service;
 import com.junyangcompany.demo.entity.professerEntity.Examinee;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public interface ExamineeService {
     /**
@@ -14,5 +15,5 @@ public interface ExamineeService {
     /**
      * 删除考生用户
      */
-    void deleteExaminee(Examinee examinee);
+    void deleteExaminee(List<Examinee> examinee);
 }

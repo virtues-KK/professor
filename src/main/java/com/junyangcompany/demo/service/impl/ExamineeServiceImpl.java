@@ -6,12 +6,11 @@ import com.junyangcompany.demo.security.mapping.User;
 import com.junyangcompany.demo.security.utils.JwtTokenUtil;
 import com.junyangcompany.demo.service.ExamineeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Objects;
+import java.util.List;
 
 /**
  * author:pan le
@@ -19,9 +18,8 @@ import java.util.Objects;
  * Time:15:20
  */
 @Service
+@Transactional
 public class ExamineeServiceImpl implements ExamineeService {
-
-    private HttpServletRequest httpRequest;
 
     private final ExamineeRepo examineeRepo;
 
@@ -52,7 +50,7 @@ public class ExamineeServiceImpl implements ExamineeService {
      * @param examinee
      */
     @Override
-    public void deleteExaminee(Examinee examinee) {
-
+    public void deleteExaminee(List<Examinee> examinee) {
+        examineeRepo.deleteInBatch(examinee);
     }
 }

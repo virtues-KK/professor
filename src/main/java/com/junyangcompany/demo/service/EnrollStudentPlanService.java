@@ -12,4 +12,7 @@ import java.util.List;
 @Service
 public interface EnrollStudentPlanService {
     List<EnrollStudentPlan> getAllEnrollCollege(EnrollCollegeEnrollBatch enrollCollegeEnrollBatch);
+
+    List<String> getEnrollMajorName(Long enrollCollegeEnrollBatchId);
+
 }

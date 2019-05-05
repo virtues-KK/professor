@@ -30,6 +30,9 @@ public interface EnrollStudentPlanRepo extends JpaRepository<EnrollStudentPlan, 
 
     List<EnrollStudentPlan> findAllByEnrollCollegeEnrollBatch(EnrollCollegeEnrollBatch enrollCollegeEnrollBatch);
 
+    @Query(value = "SELECT name from enroll_student_plan where enroll_college_enroll_batch_id = ?1",nativeQuery = true)
+    List<String> getEnrollStudentPlanNameByEnrollCollegeEnrollBatch(Long EnrollCollegeEnrollBatch);
+
     /**
      * TODO 1128 优化排序  去掉已选置顶功能
      *

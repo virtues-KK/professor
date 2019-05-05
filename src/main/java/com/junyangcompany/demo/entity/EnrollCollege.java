@@ -31,7 +31,7 @@ public class EnrollCollege {
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private Province enrollProvince;                //大学招生省份
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private List<CollegeLevel> collegeLevel;  //大学层级
 
