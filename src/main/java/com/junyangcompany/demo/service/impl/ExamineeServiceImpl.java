@@ -40,8 +40,8 @@ public class ExamineeServiceImpl implements ExamineeService {
     public Examinee addExaminee(Examinee examinee,HttpServletRequest httpServletRequest) {
         User userFromToken = jwtTokenUtil.getUserFromToken(httpServletRequest);
         examinee.setUser(userFromToken);
-        examineeRepo.save(examinee);
-        return examinee;
+        Examinee save = examineeRepo.save(examinee);
+        return save;
     }
 
     /**

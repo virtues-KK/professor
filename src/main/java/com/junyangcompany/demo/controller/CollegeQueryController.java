@@ -1,5 +1,6 @@
 package com.junyangcompany.demo.controller;
 
+import cn.hutool.core.util.PageUtil;
 import com.junyangcompany.demo.bean.CollegeProbability;
 import com.junyangcompany.demo.bean.QueryEnrollCollegeCondition;
 import com.junyangcompany.demo.entity.*;
@@ -13,6 +14,8 @@ import com.junyangcompany.demo.service.CollegeProbabilityService;
 import com.junyangcompany.demo.service.EnrollCollegeService;
 import com.junyangcompany.demo.service.EnrollMajorScoreLineService;
 import com.junyangcompany.demo.service.EnrollStudentPlanService;
+import com.junyangcompany.demo.utils.PageBean;
+import com.junyangcompany.demo.utils.page;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
@@ -101,7 +104,7 @@ public class CollegeQueryController {
             value = "/professionCollege"
     )
 //    public Page<List<ProfessionalBean>> professionCollege(@RequestBody ProfessionalBean collegeCondition, Pageable pageable) {
-    public Page<List<ProfessionalBean>> professionCollege(@RequestBody ProfessionalBean collegeCondition, Pageable pageable) {
+    public PageBean professionCollege(@RequestBody ProfessionalBean collegeCondition, Pageable pageable) {
         List<ProfessionalBean> professionalBeans = new ArrayList<>();
         List<CollegeProbability> collegeProbabilities = collegeProbabilityService.getAll(collegeCondition.getProvinceId(),
                 collegeCondition.getScienceAndArt() ? ScienceAndArt.理科 : ScienceAndArt.文科, collegeCondition.getSeq(), null, false);
@@ -181,8 +184,10 @@ public class CollegeQueryController {
             ).collect(Collectors.toList());
         }
         log.info(String.valueOf(professionalBeans.size()));
-        Page lists = new PageImpl(professionalBeans, pageable, professionalBeans.size());
-        return lists;
+        return null;
+
+//        Page lists = new PageImpl(professionalBeans, pageable, professionalBeans.size());
+//        return lists;
     }
 
     @PostMapping(
