@@ -1,31 +1,27 @@
 package com.junyangcompany.demo.controller;
 
-import cn.hutool.core.util.PageUtil;
 import com.junyangcompany.demo.bean.CollegeProbability;
 import com.junyangcompany.demo.bean.QueryEnrollCollegeCondition;
+import com.junyangcompany.demo.bean.response.FirstChoice;
 import com.junyangcompany.demo.entity.*;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import com.junyangcompany.demo.entity.professerEntity.CollegeLine;
+import com.junyangcompany.demo.entity.professerEntity.Examinee;
 import com.junyangcompany.demo.entity.professerEntity.ProfessionalBean;
 import com.junyangcompany.demo.entity.professerEntity.QueryEnrollCollegeMajorBean_demo;
 import com.junyangcompany.demo.repository.EnrollCollegeEnrollBatchRepo;
 import com.junyangcompany.demo.repository.EnrollCollegeScoreLineRepo;
-import com.junyangcompany.demo.service.CollegeProbabilityService;
-import com.junyangcompany.demo.service.EnrollCollegeService;
-import com.junyangcompany.demo.service.EnrollMajorScoreLineService;
-import com.junyangcompany.demo.service.EnrollStudentPlanService;
-import com.junyangcompany.demo.utils.PageBean;
-import com.junyangcompany.demo.utils.page;
+import com.junyangcompany.demo.repository.ProfessionalBeanRepo;
+import com.junyangcompany.demo.service.*;
+import com.junyangcompany.demo.utils.pageUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -52,14 +48,20 @@ public class CollegeQueryController {
 
     private final EnrollMajorScoreLineService enrollMajorScoreLineService;
 
+    private final professionalBeanService professionalBeanService;
+
+    private final ExamineeService examineeService;
+
     @Autowired
-    public CollegeQueryController(CollegeProbabilityService collegeProbabilityService, EnrollCollegeEnrollBatchRepo enrollCollegeEnrollBatchRepo, EnrollCollegeScoreLineRepo enrollCollegeScoreLineRepo, EnrollCollegeService enrollCollegeService, EnrollStudentPlanService enrollStudentPlanService, EnrollMajorScoreLineService enrollMajorScoreLineService) {
+    public CollegeQueryController(CollegeProbabilityService collegeProbabilityService, EnrollCollegeEnrollBatchRepo enrollCollegeEnrollBatchRepo, EnrollCollegeScoreLineRepo enrollCollegeScoreLineRepo, EnrollCollegeService enrollCollegeService, EnrollStudentPlanService enrollStudentPlanService, EnrollMajorScoreLineService enrollMajorScoreLineService, professionalBeanService professionalBeanService, ExamineeService examineeService) {
         this.collegeProbabilityService = collegeProbabilityService;
         this.enrollCollegeEnrollBatchRepo = enrollCollegeEnrollBatchRepo;
         this.enrollCollegeScoreLineRepo = enrollCollegeScoreLineRepo;
         this.enrollCollegeService = enrollCollegeService;
         this.enrollStudentPlanService = enrollStudentPlanService;
         this.enrollMajorScoreLineService = enrollMajorScoreLineService;
+        this.professionalBeanService = professionalBeanService;
+        this.examineeService = examineeService;
     }
 
     private Map<Long, ProfessionalBean> getEnrollCollegeEnrollBatchMap() {
@@ -104,11 +106,10 @@ public class CollegeQueryController {
             value = "/professionCollege"
     )
 //    public Page<List<ProfessionalBean>> professionCollege(@RequestBody ProfessionalBean collegeCondition, Pageable pageable) {
-    public PageBean professionCollege(@RequestBody ProfessionalBean collegeCondition, Pageable pageable) {
+    public Page<List<ProfessionalBean>> professionCollege(@RequestBody ProfessionalBean collegeCondition, Pageable pageable) {
         List<ProfessionalBean> professionalBeans = new ArrayList<>();
         List<CollegeProbability> collegeProbabilities = collegeProbabilityService.getAll(collegeCondition.getProvinceId(),
-                collegeCondition.getScienceAndArt() ? ScienceAndArt.理科 : ScienceAndArt.文科, collegeCondition.getSeq(), null, false);
-
+                collegeCondition.getScienceAndArt(), collegeCondition.getSeq(), null, false);
         for (CollegeProbability collegeProbability : collegeProbabilities) {
             ProfessionalBean professionalBean = new ProfessionalBean();
             professionalBeans.add(professionalBean);
@@ -120,7 +121,7 @@ public class CollegeQueryController {
             professionalBean.setBatchNames(professionalBean1.getBatchNames());
             professionalBean.setCollegeName(professionalBean1.getCollegeName());
             professionalBean.setCollegeCode(professionalBean1.getCollegeCode());
-            List<EnrollCollegeScoreLine> enrollCollegeScoreLines = enrollCollegeScoreLineRepo.findByyearAndEnrollCollegeEnrollBatch(collegeCondition.getScienceAndArt() ? ScienceAndArt.理科 : ScienceAndArt.文科,
+            List<EnrollCollegeScoreLine> enrollCollegeScoreLines = enrollCollegeScoreLineRepo.findByyearAndEnrollCollegeEnrollBatch(collegeCondition.getScienceAndArt(),
                     bid, 2015);
             List<CollegeLine> collegeLines = new ArrayList<>();
             for (EnrollCollegeScoreLine enrollCollegeScoreLine : enrollCollegeScoreLines) {
@@ -132,13 +133,13 @@ public class CollegeQueryController {
                 collegeLines.add(collegeLine);
             }
             professionalBean.setCollegeLines(collegeLines);
-
             professionalBean.setType(professionalBean1.getType());
             professionalBean.setRank(professionalBean1.getRank());
             professionalBean.setLevels(professionalBean1.getLevels());
             professionalBean.setProvinceId(collegeCondition.getProvinceId());
             professionalBean.setScienceAndArt(collegeCondition.getScienceAndArt());
             professionalBean.setSeq(collegeCondition.getSeq());
+            professionalBean.setExaminee(collegeCondition.getExaminee());
         }
         professionalBeans_static = professionalBeans;
         if (collegeCondition.getType() != null && !collegeCondition.getType().equals("")) {
@@ -149,7 +150,6 @@ public class CollegeQueryController {
 
         // 在选择批次的时候,不能做比较,只能确定某些批次来筛选
         if (collegeCondition.getBatchNames().size() != 0) {
-
             professionalBeans.stream().forEach(professionalBean -> {
                 List<String> collect = professionalBean.getBatchNames().stream().map(EnrollBatch::getName).collect(Collectors.toList());
                 log.info(String.valueOf(collect.size()));
@@ -179,17 +179,98 @@ public class CollegeQueryController {
         }
         if (collegeCondition.getMaxProbability() != null) {
             professionalBeans = professionalBeans.stream().filter(professionalBean ->
-                    professionalBean.getProbability() < collegeCondition.getMaxProbability()
-                            && professionalBean.getProbability() > collegeCondition.getMinProbability()
+                    professionalBean.getProbability() <= collegeCondition.getMaxProbability()
+                            && professionalBean.getProbability() >= 0
             ).collect(Collectors.toList());
         }
-        log.info(String.valueOf(professionalBeans.size()));
-        return null;
-
-//        Page lists = new PageImpl(professionalBeans, pageable, professionalBeans.size());
-//        return lists;
+        if (collegeCondition.getMinProbability() != null){
+            professionalBeans = professionalBeans.stream().filter(professionalBean ->
+                    professionalBean.getProbability() >= collegeCondition.getMinProbability() &&
+                            professionalBean.getProbability() <= 100
+            ).collect(Collectors.toList());
+        }
+        // put in FirstChoice
+        List<FirstChoice> firstChoices = new ArrayList<>();
+        professionalBeans.forEach(professionalBean -> {
+            FirstChoice firstChoice = new FirstChoice();
+            List<com.junyangcompany.demo.bean.response.CollegeLine> collegeLines = new ArrayList<>();
+            BeanUtils.copyProperties(professionalBean,firstChoice);
+            firstChoice.setBatchName(professionalBean.getBatchNames().get(0).getName());
+            professionalBean.getCollegeLines().forEach(collegeLine1 -> {
+                com.junyangcompany.demo.bean.response.CollegeLine collegeLine = new com.junyangcompany.demo.bean.response.CollegeLine();
+                collegeLine.setMinRank(collegeLine1.getMinRank());
+                collegeLine.setMinScore(collegeLine1.getMinScore());
+                collegeLine.setEnrollCount(collegeLine1.getEnrollCount());
+                collegeLine.setYear(collegeLine1.getYear());
+                collegeLines.add(collegeLine);
+            });
+            firstChoice.setCollegeLines(collegeLines);
+            List<String> collegeLevels = new ArrayList<>();
+            professionalBean.getLevels().forEach(l->{
+                collegeLevels.add(l.getName());
+            });
+            firstChoice.setLevels(collegeLevels);
+            firstChoices.add(firstChoice);
+        });
+        List<FirstChoice> data = pageUtils.getPageSizeDataForRelations(firstChoices, pageable.getPageSize(), pageable.getPageNumber());
+        if (data == null || data.isEmpty()){
+            return null;
+        }
+        PageRequest of = PageRequest.of(pageable.getPageNumber(), firstChoices.size());
+        Page page = new PageImpl(data,of,data.size());
+        return page;
     }
 
+    /**
+     *  保存初选结果
+     * @param firstChoices
+     * @return
+     */
+    @PutMapping
+    public List<ProfessionalBean> saveFirstChoiceResult(@RequestBody List<FirstChoice> firstChoices){
+        List<ProfessionalBean> professionalBeans = new ArrayList<>();
+        firstChoices.forEach(firstChoice -> {
+            ProfessionalBean professionalBean = new ProfessionalBean();
+            professionalBeans.add(professionalBean);
+            BeanUtils.copyProperties(firstChoice,professionalBean);
+            firstChoice.getCollegeLines().forEach(collegeLine -> {
+                CollegeLine collegeLine1 = CollegeLine.builder()
+                        .minRank(collegeLine.getMinRank())
+                        .minScore(collegeLine.getMinScore())
+                        .enrollCount(collegeLine.getEnrollCount())
+                        .year(collegeLine.getYear()).build();
+            });
+            professionalBean.setBatchNames(new ArrayList<EnrollBatch>(Arrays.asList(EnrollBatch.builder().name(firstChoice.getBatchName()).build())));
+            professionalBean.setExaminee(Examinee.builder().id(firstChoice.getExamineeId()).build());
+            List<CollegeLevel> collegeLevels = new ArrayList<>();
+            firstChoice.getLevels().forEach(collegeLevel->{
+                collegeLevels.add(CollegeLevel.builder().name(collegeLevel).build());
+            });
+            professionalBean.setLevels(collegeLevels);
+        });
+        return professionalBeanService.saveAll(professionalBeans);
+    }
+
+    /**
+     * 根据examinee查询初选结果
+     */
+    @GetMapping("searchByExaminee")
+    public List<ProfessionalBean> searchByExaminee(Long examineeId){
+//        return professionalBeanService.searchByExamineeId(examineeId);
+        if (examineeService.getExaminee(examineeId).isPresent()){
+            Examinee examinee = examineeService.getExaminee(examineeId).get();
+            List<ProfessionalBean> professionalBeans = examinee.getProfessionalBeans();
+            return professionalBeans;
+        }
+        return null;
+    }
+
+
+    /**
+     * @param condition
+     * @param pageable
+     * @return
+     */
     @PostMapping(
             value = "queryEnrollCollegeByCondition"
     )
@@ -217,6 +298,12 @@ public class CollegeQueryController {
 //        return lists1;
 //    }
 
+    /**
+     * 查询给定大学id的所有专业
+     * @param pageable
+     * @param list
+     * @return
+     */
     @GetMapping("major")
     public Slice<List<QueryEnrollCollegeMajorBean_demo>> demo(@PageableDefault(value = 3, sort = "maxScore", direction = Sort.Direction.ASC) Pageable pageable, @RequestParam List<Long> list) {
         return enrollMajorScoreLineService.getMajorScoreLine(list, pageable);

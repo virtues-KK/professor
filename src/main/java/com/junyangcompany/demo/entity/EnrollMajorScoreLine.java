@@ -77,15 +77,11 @@ public class EnrollMajorScoreLine {
      */
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private EnrollBatch enrollBatch;
     /**
      * 招生大学
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(nullable = false)
-    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private EnrollCollege enrollCollege;
-
-
 }

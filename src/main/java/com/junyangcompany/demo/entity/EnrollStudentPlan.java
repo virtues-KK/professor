@@ -79,10 +79,9 @@ public class EnrollStudentPlan {
      */
     private Integer year;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "enroll_college_id")
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-    @JsonIgnore
     private EnrollCollege enrollCollege;
 
     @ManyToMany(fetch = FetchType.LAZY)

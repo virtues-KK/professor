@@ -1,13 +1,11 @@
 package com.junyangcompany.demo.entity.professerEntity;
 
-import com.junyangcompany.demo.bean.UserInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.CollegeLevel;
 import com.junyangcompany.demo.entity.EnrollBatch;
-import com.junyangcompany.demo.entity.EnrollCollegeEnrollBatch;
-import com.junyangcompany.demo.entity.EnrollStudentPlan;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
+import lombok.*;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,8 +14,8 @@ import java.util.List;
 /**
  * 生涯测评师初选结果
  */
-
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -29,23 +27,27 @@ public class ProfessionalBean {
 
     private Long enrollCollegeEnrollBatch;
 
+    @NonNull
     private Long seq; // 位次
 
-    private Boolean scienceAndArt; // 文理科
+    @NonNull
+    private ScienceAndArt scienceAndArt; // 文理科
 
+    @NonNull
     private Long provinceId;
 
     private String collegeName;
 
 //    private String batchName;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<EnrollBatch> batchNames = new ArrayList<>();
 
     private String collegeCode;
 
-    @OneToMany
-    private  List<CollegeLine> collegeLines;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "collegeLine_id")
+    private List<CollegeLine> collegeLines;
 
     private Integer probability;
 
@@ -63,17 +65,44 @@ public class ProfessionalBean {
     private Integer maxRank;
 
     @OneToMany
+    @JoinColumn(name = "collegeLevel_id")
     private List<CollegeLevel> levels;
 
     @OneToMany
-   private List<PlanLine> planLInes;
+    @JoinColumn(name = "planLine_id")
+    private List<PlanLine> planLInes;
 
     /**
      * 考生信息
      */
-//   @ManyToOne(fetch = FetchType.LAZY)
-//   private Examinee examinee;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
+    private Examinee examinee;
 
+    @Override
+    public String toString() {
+        return "ProfessionalBean{" +
+                "id=" + id +
+                ", enrollCollegeEnrollBatch=" + enrollCollegeEnrollBatch +
+                ", seq=" + seq +
+                ", scienceAndArt=" + scienceAndArt +
+                ", provinceId=" + provinceId +
+                ", collegeName='" + collegeName + '\'' +
+                ", batchNames=" + batchNames +
+                ", collegeCode='" + collegeCode + '\'' +
+                ", collegeLines=" + collegeLines +
+                ", probability=" + probability +
+                ", maxProbability=" + maxProbability +
+                ", minProbability=" + minProbability +
+                ", type='" + type + '\'' +
+                ", rank=" + rank +
+                ", minRank=" + minRank +
+                ", maxRank=" + maxRank +
+                ", levels=" + levels +
+                ", planLInes=" + planLInes +
+                ", examinee=" + examinee +
+                '}';
+    }
 }
 
 

@@ -2,6 +2,7 @@ package com.junyangcompany.demo.entity.professerEntity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.EnrollBatch;
+import com.junyangcompany.demo.entity.EnrollCollege;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -69,10 +70,22 @@ public class QueryEnrollCollegeMajorBean_demo {
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private EnrollBatch enrollBatch;
 
+    @ManyToOne
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    private EnrollCollege enrollCollege;
+
+    /**
+     * 招生大学
+     */
+//    @ManyToOne
+//    @JoinColumn(nullable = false)
+//    private EnrollCollege enrollCollege;
+
 //    @ManyToOne(fetch = FetchType.LAZY)
 //    private Examinee examinee;
 
-    public QueryEnrollCollegeMajorBean_demo(Integer maxScore, Integer minScore, Integer minRank, Double averageScore, Integer enrollCount, Integer scoreLineDiff, Integer year, String price, String name, Integer yearOfStudy, EnrollBatch enrollBatch) {
+
+    public QueryEnrollCollegeMajorBean_demo(Integer maxScore, Integer minScore, Integer minRank, Double averageScore, Integer enrollCount, Integer scoreLineDiff, Integer year, String price, String name, Integer yearOfStudy, EnrollBatch enrollBatch,EnrollCollege enrollCollege) {
         this.maxScore = maxScore;
         this.minScore = minScore;
         this.minRank = minRank;
@@ -84,5 +97,6 @@ public class QueryEnrollCollegeMajorBean_demo {
         this.name = name;
         this.yearOfStudy = yearOfStudy;
         this.enrollBatch = enrollBatch;
+        this.enrollCollege = enrollCollege;
     }
 }

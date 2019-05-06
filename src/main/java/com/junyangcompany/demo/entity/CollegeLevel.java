@@ -1,15 +1,13 @@
 package com.junyangcompany.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.professerEntity.ProfessionalBean;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Cacheable;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 @Data
 @Entity
@@ -25,6 +23,7 @@ public class CollegeLevel implements Comparable<CollegeLevel> {
     private String name;
 
     @ManyToOne
+    @JsonIgnore
     private ProfessionalBean professionalBean;
 
     @Override

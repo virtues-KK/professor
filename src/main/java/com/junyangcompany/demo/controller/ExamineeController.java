@@ -5,10 +5,14 @@ import com.junyangcompany.demo.security.mapping.User;
 import com.junyangcompany.demo.security.utils.JwtTokenUtil;
 import com.junyangcompany.demo.service.ExamineeService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * author:pan le
@@ -31,6 +35,10 @@ public class ExamineeController {
 
     @PostMapping("add")
     public Examinee addExaminee(@RequestBody Examinee examinee, HttpServletRequest httpServletRequest){
+        Matcher matcher = Pattern.compile("[\\u4e00-\\u9fa5]+").matcher(examinee.getName());
+        if (!matcher.find()){
+            throw new RuntimeException("名字必须是中文");
+        }
         return examineeService.addExaminee(examinee,httpServletRequest);
     }
 
@@ -42,7 +50,8 @@ public class ExamineeController {
     }
 
     @DeleteMapping
-    public void delete(@RequestParam List<Examinee> examinees){
-        examineeService.deleteExaminee(examinees);
+    public void delete(@RequestParam List<Long> examinees,HttpServletRequest servletRequest){
+        User userFromToken = jwtTokenUtil.getUserFromToken(servletRequest);
+        examineeService.deleteExaminee(examinees,userFromToken);
     }
 }

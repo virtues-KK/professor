@@ -1,10 +1,9 @@
 package com.junyangcompany.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.professerEntity.ProfessionalBean;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.junyangcompany.demo.entity.professerEntity.QueryEnrollCollegeMajorBean_demo;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -15,7 +14,8 @@ import java.util.List;
  * @author zxy
  * @date 2018-10-25 10:42
  */
-@Data
+@Getter
+@Setter
 @Entity
 @Cacheable
 @Builder
@@ -24,13 +24,20 @@ import java.util.List;
 public class EnrollBatch {
 
     @Id
-    @GeneratedValue
     private Long id;
 
     @Column(nullable = false)
     private String name;
 
     @ManyToMany(mappedBy = "batchNames", fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<ProfessionalBean> professionalBeans = new ArrayList<>();
 
+    @Override
+    public String toString() {
+        return "EnrollBatch{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
+    }
 }

@@ -1,6 +1,9 @@
 package com.junyangcompany.demo.entity.professerEntity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -11,6 +14,8 @@ import javax.persistence.*;
  */
 @Entity
 @Data
+@Builder
+@NoArgsConstructor
 public class CollegeLine
 {
     @Id
@@ -23,8 +28,10 @@ public class CollegeLine
     public Integer year;
 
     @ManyToOne
+    @JsonIgnore
     private ProfessionalBean professionalBean;
 
     @ManyToOne
+    @JoinColumn(name = "planLine_id")
     private PlanLine planLine;
 }

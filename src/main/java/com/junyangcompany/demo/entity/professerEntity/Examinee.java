@@ -3,9 +3,11 @@ package com.junyangcompany.demo.entity.professerEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import com.junyangcompany.demo.security.mapping.User;
+import lombok.Builder;
 import lombok.Data;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -19,6 +21,8 @@ import java.util.List;
  */
 @Data
 @Entity
+@Builder
+@EntityListeners(AuditingEntityListener.class)
 public class Examinee {
 
     @Id
@@ -45,7 +49,7 @@ public class Examinee {
      * 测评师初选结果
      */
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "professionalBean_id")
+    @JoinColumn(name = "examinee_id")
     @JsonIgnore
     private List<ProfessionalBean> professionalBeans;
 
@@ -53,7 +57,7 @@ public class Examinee {
      * 测评师精选结果
      */
     @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "queryEnrollCollegeMajorBean_id")
+    @JoinColumn(name = "examinee_id")
     @JsonIgnore
     private List<QueryEnrollCollegeMajorBean_demo> queryEnrollCollegeMajorBeanDemos;
 

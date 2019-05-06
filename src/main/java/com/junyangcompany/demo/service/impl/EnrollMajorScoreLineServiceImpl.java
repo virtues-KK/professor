@@ -6,6 +6,7 @@ import com.junyangcompany.demo.entity.EnrollStudentPlan;
 import com.junyangcompany.demo.repository.EnrollMajorScoreLineRepo;
 import com.junyangcompany.demo.service.EnrollMajorScoreLineService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,7 @@ public class EnrollMajorScoreLineServiceImpl implements EnrollMajorScoreLineServ
 
 
     @Override
-    public Slice<List<QueryEnrollCollegeMajorBean_demo>> getMajorScoreLine(List<Long> enrollStudentId, Pageable pageable) {
+    public Page<List<QueryEnrollCollegeMajorBean_demo>> getMajorScoreLine(List<Long> enrollStudentId, Pageable pageable) {
         return enrollMajorScoreLineRepo.getMajorScoreLine(enrollStudentId,pageable);
     }
 }

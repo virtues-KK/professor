@@ -1,5 +1,6 @@
 package com.junyangcompany.demo.entity.professerEntity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.EnrollStudentPlan;
 import lombok.Data;
 
@@ -22,9 +23,11 @@ public class PlanLine
     @OneToOne
     public EnrollStudentPlan enrollStudentPlan;
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    @JsonIgnore
     public List<CollegeLine> collegeLines;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JsonIgnore
     private ProfessionalBean professionalBean;
 }

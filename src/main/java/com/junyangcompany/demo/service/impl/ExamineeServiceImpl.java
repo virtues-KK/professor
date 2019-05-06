@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * author:pan le
@@ -47,10 +48,15 @@ public class ExamineeServiceImpl implements ExamineeService {
     /**
      * 删除考生用户
      *
-     * @param examinee
+     * @param
      */
     @Override
-    public void deleteExaminee(List<Examinee> examinee) {
-        examineeRepo.deleteInBatch(examinee);
+    public void deleteExaminee(List<Long> examinee_id, User user) {
+        examineeRepo.deleteByIds(examinee_id,user);
+    }
+
+    @Override
+    public Optional<Examinee> getExaminee(Long id) {
+        return examineeRepo.findById(id);
     }
 }
