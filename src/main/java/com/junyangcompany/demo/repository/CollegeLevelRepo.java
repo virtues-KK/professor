@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 
 import javax.persistence.QueryHint;
 import java.util.List;
+import java.util.Optional;
 
 public interface CollegeLevelRepo extends JpaRepository<CollegeLevel, Long> {
 
@@ -17,5 +18,8 @@ public interface CollegeLevelRepo extends JpaRepository<CollegeLevel, Long> {
     @QueryHints({@QueryHint(name = org.hibernate.jpa.QueryHints.HINT_CACHEABLE, value = "true")})
     @Override
     List<CollegeLevel> findAll();
+
+    @Query(value = "from CollegeLevel where name in :names")
+    Optional<List<CollegeLevel>> findByName(@Param("names") List<String> name);
 
 }

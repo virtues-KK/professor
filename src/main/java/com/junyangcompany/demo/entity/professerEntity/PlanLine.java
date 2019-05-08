@@ -29,5 +29,5 @@ public class PlanLine
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JsonIgnore
-    private ProfessionalBean professionalBean;
+    private ProfessionalEntity professionalEntity;
 }

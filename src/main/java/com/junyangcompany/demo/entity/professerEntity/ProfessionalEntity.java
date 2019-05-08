@@ -1,6 +1,5 @@
 package com.junyangcompany.demo.entity.professerEntity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.CollegeLevel;
 import com.junyangcompany.demo.entity.EnrollBatch;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
@@ -16,10 +15,11 @@ import java.util.List;
  */
 @Getter
 @Setter
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class ProfessionalBean {
+public class ProfessionalEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,12 +40,12 @@ public class ProfessionalBean {
 
 //    private String batchName;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
     private List<EnrollBatch> batchNames = new ArrayList<>();
 
     private String collegeCode;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.MERGE,fetch = FetchType.LAZY)
     @JoinColumn(name = "collegeLine_id")
     private List<CollegeLine> collegeLines;
 
@@ -64,45 +64,24 @@ public class ProfessionalBean {
 
     private Integer maxRank;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
     @JoinColumn(name = "collegeLevel_id")
     private List<CollegeLevel> levels;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "planLine_id")
     private List<PlanLine> planLInes;
+
+//    @OneToMany(cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+//    @JoinColumn(name = "secondChoiceId")
+//    private List<QueryEnrollCollegeMajorBean_demo> secondChoices = new ArrayList<>();
 
     /**
      * 考生信息
      */
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     private Examinee examinee;
 
-    @Override
-    public String toString() {
-        return "ProfessionalBean{" +
-                "id=" + id +
-                ", enrollCollegeEnrollBatch=" + enrollCollegeEnrollBatch +
-                ", seq=" + seq +
-                ", scienceAndArt=" + scienceAndArt +
-                ", provinceId=" + provinceId +
-                ", collegeName='" + collegeName + '\'' +
-                ", batchNames=" + batchNames +
-                ", collegeCode='" + collegeCode + '\'' +
-                ", collegeLines=" + collegeLines +
-                ", probability=" + probability +
-                ", maxProbability=" + maxProbability +
-                ", minProbability=" + minProbability +
-                ", type='" + type + '\'' +
-                ", rank=" + rank +
-                ", minRank=" + minRank +
-                ", maxRank=" + maxRank +
-                ", levels=" + levels +
-                ", planLInes=" + planLInes +
-                ", examinee=" + examinee +
-                '}';
-    }
 }
 
 

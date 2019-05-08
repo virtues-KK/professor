@@ -1,6 +1,6 @@
 package com.junyangcompany.demo.service.impl;
 
-import com.junyangcompany.demo.entity.professerEntity.ProfessionalBean;
+import com.junyangcompany.demo.entity.professerEntity.ProfessionalEntity;
 import com.junyangcompany.demo.repository.ProfessionalBeanRepo;
 import com.junyangcompany.demo.service.professionalBeanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +26,21 @@ public class professionalBeanServiceImpl implements professionalBeanService {
 
     /**
      *  更新并保存
-     * @param professionalBeans
+     * @param professionalEntities
      */
     @Override
     @Transactional
-    public List<ProfessionalBean> saveAll(List<ProfessionalBean> professionalBeans) {
-        return professionalBeanRepo.saveAll(professionalBeans);
+    public List<ProfessionalEntity> saveAll(List<ProfessionalEntity> professionalEntities) {
+        return professionalBeanRepo.saveAll(professionalEntities);
     }
 
     @Override
-    public List<ProfessionalBean> searchByExamineeId(Long examineeId) {
+    public List<ProfessionalEntity> searchByExamineeId(Long examineeId) {
         return professionalBeanRepo.findByExamineeId(examineeId);
+    }
+
+    @Override
+    public ProfessionalEntity save(ProfessionalEntity professionalEntity) {
+        return professionalBeanRepo.save(professionalEntity);
     }
 }

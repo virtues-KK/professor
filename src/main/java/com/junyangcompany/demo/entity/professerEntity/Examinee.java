@@ -3,8 +3,10 @@ package com.junyangcompany.demo.entity.professerEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import com.junyangcompany.demo.security.mapping.User;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -22,6 +24,8 @@ import java.util.List;
 @Data
 @Entity
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Examinee {
 
@@ -48,15 +52,14 @@ public class Examinee {
     /**
      * 测评师初选结果
      */
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,orphanRemoval = true)
     @JoinColumn(name = "examinee_id")
-    @JsonIgnore
-    private List<ProfessionalBean> professionalBeans;
+    private List<ProfessionalEntity> professionalEntities;
 
     /**
      * 测评师精选结果
      */
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
     @JoinColumn(name = "examinee_id")
     @JsonIgnore
     private List<QueryEnrollCollegeMajorBean_demo> queryEnrollCollegeMajorBeanDemos;

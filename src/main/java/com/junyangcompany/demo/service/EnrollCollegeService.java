@@ -9,4 +9,5 @@ import org.springframework.stereotype.Service;
 @Service
 public interface EnrollCollegeService {
     Page<EnrollCollege> getAllEnrollCollege(QueryEnrollCollegeCondition condition, Pageable pageable);
+
 }

@@ -1,8 +1,7 @@
 package com.junyangcompany.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.junyangcompany.demo.entity.professerEntity.ProfessionalBean;
-import com.junyangcompany.demo.entity.professerEntity.QueryEnrollCollegeMajorBean_demo;
+import com.junyangcompany.demo.entity.professerEntity.ProfessionalEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,6 +18,7 @@ import java.util.List;
 @Entity
 @Cacheable
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class EnrollBatch {
@@ -31,13 +31,5 @@ public class EnrollBatch {
 
     @ManyToMany(mappedBy = "batchNames", fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<ProfessionalBean> professionalBeans = new ArrayList<>();
-
-    @Override
-    public String toString() {
-        return "EnrollBatch{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
-    }
+    private List<ProfessionalEntity> professionalEntities = new ArrayList<>();
 }

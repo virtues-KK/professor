@@ -52,7 +52,8 @@ public class ExamineeServiceImpl implements ExamineeService {
      */
     @Override
     public void deleteExaminee(List<Long> examinee_id, User user) {
-        examineeRepo.deleteByIds(examinee_id,user);
+        List<Examinee> allById = examineeRepo.findAllById(examinee_id);
+        examineeRepo.deleteAll(allById);
     }
 
     @Override

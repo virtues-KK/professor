@@ -2,10 +2,7 @@ package com.junyangcompany.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.enumeration.Grade;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.ColumnDefault;
 
@@ -18,6 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Cacheable
+@ToString
 public class EnrollCollege {
     @Id
     private Long id;
@@ -99,10 +97,10 @@ public class EnrollCollege {
     /**
      * 招生简章
      */
-//    @OneToMany(fetch = FetchType.LAZY)
-//    @JoinColumn
-//    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
-//    private List<EnrollCollegeGuide> enrollCollegeGuides;
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn
+    @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    private List<EnrollCollegeGuide> enrollCollegeGuides;
 
     //基础大学
     @ManyToOne(fetch = FetchType.LAZY)

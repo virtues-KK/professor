@@ -1,10 +1,7 @@
 package com.junyangcompany.demo.entity.professerEntity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.EnrollBatch;
 import com.junyangcompany.demo.entity.EnrollCollege;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -74,15 +71,12 @@ public class QueryEnrollCollegeMajorBean_demo {
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
     private EnrollCollege enrollCollege;
 
-    /**
-     * 招生大学
-     */
-//    @ManyToOne
-//    @JoinColumn(nullable = false)
-//    private EnrollCollege enrollCollege;
+    @ManyToOne(fetch = FetchType.EAGER)
+    private ProfessionalEntity professionalEntity;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    private Examinee examinee;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Examinee examinee;
+
 
 
     public QueryEnrollCollegeMajorBean_demo(Integer maxScore, Integer minScore, Integer minRank, Double averageScore, Integer enrollCount, Integer scoreLineDiff, Integer year, String price, String name, Integer yearOfStudy, EnrollBatch enrollBatch,EnrollCollege enrollCollege) {

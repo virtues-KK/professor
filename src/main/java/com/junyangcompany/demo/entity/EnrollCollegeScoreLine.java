@@ -1,5 +1,6 @@
 package com.junyangcompany.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import lombok.Data;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -30,6 +31,7 @@ public class EnrollCollegeScoreLine {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(nullable = false)
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    @JsonIgnore
     private EnrollCollege enrollCollege;
 
     /**
@@ -59,6 +61,7 @@ public class EnrollCollegeScoreLine {
     @ManyToOne
     @JoinColumn(nullable = false)
     @org.hibernate.annotations.Cache(usage = CacheConcurrencyStrategy.READ_ONLY)
+    @JsonIgnore
     private EnrollBatch enrollBatch;
 
     /**

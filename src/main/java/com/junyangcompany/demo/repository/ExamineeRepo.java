@@ -15,7 +15,7 @@ public interface ExamineeRepo extends JpaRepository<Examinee,Long> {
     void deleteInBatch(Iterable<Examinee> iterable);
 
     @Modifying
-    @Query(value = "DELETE from Examinee where id in :along  and user = :user ")
+    @Query(value = "DELETE from Examinee where id in :along and user = :user ")
     void deleteByIds(@Param("along") List<Long> aLong, @Param("user")User user);
 
     @Override

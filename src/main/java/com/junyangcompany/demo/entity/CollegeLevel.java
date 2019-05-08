@@ -1,7 +1,7 @@
 package com.junyangcompany.demo.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.junyangcompany.demo.entity.professerEntity.ProfessionalBean;
+import com.junyangcompany.demo.entity.professerEntity.ProfessionalEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -24,7 +24,7 @@ public class CollegeLevel implements Comparable<CollegeLevel> {
 
     @ManyToOne
     @JsonIgnore
-    private ProfessionalBean professionalBean;
+    private ProfessionalEntity professionalEntity;
 
     @Override
     public int compareTo(CollegeLevel o) {
