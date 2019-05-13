@@ -17,8 +17,12 @@ import java.util.List;
 @Service
 public class EnrollStudentPlanServiceImpl implements EnrollStudentPlanService {
 
+    private final EnrollStudentPlanRepo enrollStudentPlanRepo;
+
     @Autowired
-    private EnrollStudentPlanRepo enrollStudentPlanRepo;
+    public EnrollStudentPlanServiceImpl(EnrollStudentPlanRepo enrollStudentPlanRepo) {
+        this.enrollStudentPlanRepo = enrollStudentPlanRepo;
+    }
 
     @Override
     public List<EnrollStudentPlan> getAllEnrollCollege(EnrollCollegeEnrollBatch enrollCollegeEnrollBatch) {

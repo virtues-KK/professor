@@ -3,6 +3,7 @@ package com.junyangcompany.demo.utils;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.math.BigDecimal;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -40,21 +41,22 @@ public class ExportExcelUtils {
         if(response ==null ){
             response= ((ServletRequestAttributes)RequestContextHolder.getRequestAttributes()).getResponse();
         }
-        response.setContentType("Application/msexcel;charset=UTF-8");
-
+        assert response != null;
         String fileName=desName+getDateStr()+".xls"; // 拼接文件名称， 由业务文件名和时间戳组成
         try {
-            fileName = new String(fileName.getBytes("GBK"),"GBK");
+            fileName = new String(fileName.getBytes("GBK"), StandardCharsets.ISO_8859_1);
         } catch (UnsupportedEncodingException e1) {
             LOGGER.error(e1.getMessage(),e1);
         }
-//        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
-//        response.setContentType("application/vnd.ms-excel");
+        response.setHeader("Content-Disposition", "attachment;filename=" + fileName);
+        response.setContentType("application/octet-stream;charset=UTF-8");
+        response.setContentType("application/vnd.ms-excel");
+        response.setCharacterEncoding("UTF-8");
         //默认输出到桌面
-        File file = new File("C:\\Users\\sunwukong\\Desktop");
-        OutputStream outputStream = new FileOutputStream(new File(file,fileName));
+//        File file = new File("C:\\Users\\sunwukong\\Desktop");
+//        OutputStream outputStream = new FileOutputStream(new File(file,fileName));
         try {
-            writeExcel(outputStream,sheetName,field, data);
+            writeExcel(response.getOutputStream(),sheetName,field, data);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

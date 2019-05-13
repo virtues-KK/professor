@@ -2,6 +2,7 @@ package com.junyangcompany.demo.entity;
 
 import lombok.*;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 

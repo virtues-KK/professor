@@ -1,5 +1,6 @@
 package com.junyangcompany.demo.bean.response;
 
+import com.junyangcompany.demo.entity.EnrollCollege;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -15,14 +16,16 @@ import lombok.NoArgsConstructor;
 public class SecondChoiceBean {
     private String name;
     private String collegeName;
-    private String year;
-    private String charge;
-    private String yearOfStudy;
+    private Integer year;
+    private Integer price;
+    private Integer yearOfStudy;
     private String enrollBatch;
-    private String minScore;
-    private String minRank;
-    private String averageScore;
-    private String enrollCount;
-    private String scoreLineDiff;
+    private Integer minScore;
+    private Integer minRank;
+    private Double averageScore;
+    private Integer enrollCount;
+    private Integer scoreLineDiff;
+    private Long enrollMajorScoreLine_id;
     private String enrollCollegeGuides;
+    private EnrollCollege enrollCollege;
 }

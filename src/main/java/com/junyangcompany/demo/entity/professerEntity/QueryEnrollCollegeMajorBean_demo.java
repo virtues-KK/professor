@@ -23,6 +23,8 @@ public class QueryEnrollCollegeMajorBean_demo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long enrollMajorScoreLine_id;
+
     /**
      * 最高分
      */
@@ -49,7 +51,6 @@ public class QueryEnrollCollegeMajorBean_demo {
      * 线差
      */
     private Integer scoreLineDiff;
-
 
     /**
      * 学年
@@ -79,7 +80,8 @@ public class QueryEnrollCollegeMajorBean_demo {
 
 
 
-    public QueryEnrollCollegeMajorBean_demo(Integer maxScore, Integer minScore, Integer minRank, Double averageScore, Integer enrollCount, Integer scoreLineDiff, Integer year, String price, String name, Integer yearOfStudy, EnrollBatch enrollBatch,EnrollCollege enrollCollege) {
+    public QueryEnrollCollegeMajorBean_demo(Long enrollMajorScoreLine_id,Integer maxScore, Integer minScore, Integer minRank, Double averageScore, Integer enrollCount, Integer scoreLineDiff, Integer year, String price, String name, Integer yearOfStudy, EnrollBatch enrollBatch,EnrollCollege enrollCollege) {
+        this.enrollMajorScoreLine_id = enrollMajorScoreLine_id;
         this.maxScore = maxScore;
         this.minScore = minScore;
         this.minRank = minRank;

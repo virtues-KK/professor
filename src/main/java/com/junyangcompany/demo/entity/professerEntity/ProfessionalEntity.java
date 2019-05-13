@@ -15,7 +15,6 @@ import java.util.List;
  */
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -40,13 +39,12 @@ public class ProfessionalEntity {
 
 //    private String batchName;
 
-    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
+    @ManyToMany(fetch = FetchType.EAGER,cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
     private List<EnrollBatch> batchNames = new ArrayList<>();
 
     private String collegeCode;
 
     @OneToMany(cascade = CascadeType.MERGE,fetch = FetchType.LAZY)
-    @JoinColumn(name = "collegeLine_id")
     private List<CollegeLine> collegeLines;
 
     private Integer probability;
@@ -64,8 +62,7 @@ public class ProfessionalEntity {
 
     private Integer maxRank;
 
-    @OneToMany(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
-    @JoinColumn(name = "collegeLevel_id")
+    @ManyToMany(fetch = FetchType.LAZY,cascade = {CascadeType.MERGE,CascadeType.PERSIST,CascadeType.REFRESH,CascadeType.DETACH})
     private List<CollegeLevel> levels;
 
     @OneToMany(fetch = FetchType.LAZY)
@@ -82,6 +79,30 @@ public class ProfessionalEntity {
     @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     private Examinee examinee;
 
+    @Override
+    public String toString() {
+        return "ProfessionalEntity{" +
+                "id=" + id +
+                ", enrollCollegeEnrollBatch=" + enrollCollegeEnrollBatch +
+                ", seq=" + seq +
+                ", scienceAndArt=" + scienceAndArt +
+                ", provinceId=" + provinceId +
+                ", collegeName='" + collegeName + '\'' +
+                ", batchNames=" + batchNames +
+                ", collegeCode='" + collegeCode + '\'' +
+                ", collegeLines=" + collegeLines +
+                ", probability=" + probability +
+                ", maxProbability=" + maxProbability +
+                ", minProbability=" + minProbability +
+                ", type='" + type + '\'' +
+                ", rank=" + rank +
+                ", minRank=" + minRank +
+                ", maxRank=" + maxRank +
+                ", levels=" + levels +
+                ", planLInes=" + planLInes +
+                ", examinee=" + examinee +
+                '}';
+    }
 }
 
 

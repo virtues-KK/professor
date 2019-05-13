@@ -2,6 +2,7 @@ package com.junyangcompany.demo.repository;
 
 import com.junyangcompany.demo.entity.professerEntity.ProfessionalEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
@@ -13,6 +14,10 @@ import java.util.List;
  */
 public interface ProfessionalBeanRepo extends JpaRepository<ProfessionalEntity,Long> {
 
-    @Query(value = "SELECT * from professional_bean where examinee_id = ?1 ", nativeQuery = true)
+    @Query(value = "SELECT * from professional_entity where examinee_id = ?1 ", nativeQuery = true)
     List<ProfessionalEntity> findByExamineeId(Long examineeId);
+
+    @Modifying
+    @Query(value = "delete from professional_entity where examinee_id = ?1",nativeQuery = true)
+    void deleteAllByExamineeId(Long ExamineeId);
 }

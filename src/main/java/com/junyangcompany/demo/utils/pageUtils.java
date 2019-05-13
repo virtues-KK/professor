@@ -12,11 +12,11 @@ import java.util.List;
 
 public class pageUtils {
     public static <T> List<T> getPageSizeDataForRelations(List<T> datas, int pageSize, int pageNo){
+        List<T> res = new ArrayList<>();
         int startNum = (pageNo)* pageSize+1 ;                     //起始截取数据位置
         if(startNum > datas.size()){
-            return null;
+            return res;
         }
-        List<T> res = new ArrayList<>();
         int rum = datas.size() - startNum;
         if(rum < 0){
             for (int i = 0 ; i < datas.size() ; i++){
@@ -40,7 +40,7 @@ public class pageUtils {
             }
             return res;
         }else{
-            return null;
+            return res;
         }
     }
 }

@@ -18,7 +18,6 @@ import java.util.List;
 @Entity
 @Cacheable
 @Builder
-@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 public class EnrollBatch {
@@ -32,4 +31,5 @@ public class EnrollBatch {
     @ManyToMany(mappedBy = "batchNames", fetch = FetchType.LAZY)
     @JsonIgnore
     private List<ProfessionalEntity> professionalEntities = new ArrayList<>();
+
 }

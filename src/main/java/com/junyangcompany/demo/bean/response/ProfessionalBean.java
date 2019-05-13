@@ -66,7 +66,7 @@ public class ProfessionalBean {
     /**
      * 搜索关键字
      */
-    private String keyWord;
+    private String keyword;
 
 //    private List<PlanLine> planLInes;
 

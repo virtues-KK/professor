@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Data
 @Entity
@@ -22,9 +23,10 @@ public class CollegeLevel implements Comparable<CollegeLevel> {
 
     private String name;
 
-    @ManyToOne
+    @ManyToMany
+    @JoinColumn(name = "collegeLevel_id")
     @JsonIgnore
-    private ProfessionalEntity professionalEntity;
+    private List<ProfessionalEntity> professionalEntitys;
 
     @Override
     public int compareTo(CollegeLevel o) {
