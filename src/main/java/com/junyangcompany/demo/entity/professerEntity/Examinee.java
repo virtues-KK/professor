@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -52,7 +53,7 @@ public class Examinee {
     /**
      * 测评师初选结果
      */
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE,orphanRemoval = true)
+    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
     @JoinColumn(name = "examinee_id")
     private List<ProfessionalEntity> professionalEntities;
 
@@ -77,4 +78,47 @@ public class Examinee {
     @CreatedDate
     private Date createTime;
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setGender(Boolean gender) {
+        this.gender = gender;
+    }
+
+    public void setScienceAndArt(ScienceAndArt scienceAndArt) {
+        this.scienceAndArt = scienceAndArt;
+    }
+
+    public void setScore(Integer score) {
+        this.score = score;
+    }
+
+    public void setWeiCi(Integer weiCi) {
+        this.weiCi = weiCi;
+    }
+
+    public void setProfessionalEntities(List<ProfessionalEntity> professionalEntities) {
+        this.professionalEntities = professionalEntities;
+    }
+
+    public void setQueryEnrollCollegeMajorBeanDemos(List<QueryEnrollCollegeMajorBean_demo> queryEnrollCollegeMajorBeanDemos) {
+        this.queryEnrollCollegeMajorBeanDemos = queryEnrollCollegeMajorBeanDemos;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setCreateName(String createName) {
+        this.createName = createName;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
 }

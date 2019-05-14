@@ -14,4 +14,5 @@ public interface SecondChoiceService {
     List<QueryEnrollCollegeMajorBean_demo> save(List<QueryEnrollCollegeMajorBean_demo> queryEnrollCollegeMajorBean_demos, HttpServletRequest httpServletRequest);
     void delete(List<Long> ids);
     List<QueryEnrollCollegeMajorBean_demo> search(Long examineeId);
+    void deleteByFirstChoiceId(List<Long> firstChoiceId);
 }

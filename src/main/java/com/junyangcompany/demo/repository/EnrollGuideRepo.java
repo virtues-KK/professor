@@ -28,6 +28,6 @@ public interface EnrollGuideRepo extends JpaRepository<EnrollGuide,Long> {
     /**
      * 根据enrollCollegeId查询招生简章
      */
-    @Query(value = "SELECT * from enroll_guide a where id in (SELECT enroll_guide_id from enroll_college_guide where enroll_college_id = ?1)",nativeQuery = true)
+    @Query(value = "SELECT * from enroll_guide a where id in (SELECT enroll_guide_id from enroll_college_guide where enroll_college_id = ?1 ) ORDER BY publish_date",nativeQuery = true)
     List<EnrollGuide> findByEnrollCollegeId(Long enrollCollegeId);
 }

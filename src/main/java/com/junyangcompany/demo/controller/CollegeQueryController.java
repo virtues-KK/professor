@@ -13,6 +13,7 @@ import com.junyangcompany.demo.entity.professerEntity.QueryEnrollCollegeMajorBea
 import com.junyangcompany.demo.repository.EnrollCollegeEnrollBatchRepo;
 import com.junyangcompany.demo.repository.EnrollCollegeScoreLineRepo;
 import com.junyangcompany.demo.repository.ProfessionalBeanRepo;
+import com.junyangcompany.demo.repository.SecondChoiceRepo;
 import com.junyangcompany.demo.service.*;
 import com.junyangcompany.demo.utils.ExportExcelUtils;
 import com.junyangcompany.demo.utils.pageUtils;
@@ -70,9 +71,12 @@ public class CollegeQueryController {
 
     private final EnrollGuideService enrollGuideService;
 
+    private final SecondChoiceRepo secondChoiceRepo;
+
+
 
     @Autowired
-    public CollegeQueryController(CollegeProbabilityService collegeProbabilityService, EnrollCollegeEnrollBatchRepo enrollCollegeEnrollBatchRepo, EnrollCollegeScoreLineRepo enrollCollegeScoreLineRepo, EnrollCollegeService enrollCollegeService, EnrollStudentPlanService enrollStudentPlanService, EnrollMajorScoreLineService enrollMajorScoreLineService, professionalBeanService professionalBeanService, ExamineeService examineeService, EnrollBatchService enrollBatchService, CollegeLevelService collegeLevelService, CollegeLineService collegeLineService, SecondChoiceService secondChoiceService, ProfessionalBeanRepo professionalBeanRepo, EnrollGuideService enrollGuideService) {
+    public CollegeQueryController(CollegeProbabilityService collegeProbabilityService, EnrollCollegeEnrollBatchRepo enrollCollegeEnrollBatchRepo, EnrollCollegeScoreLineRepo enrollCollegeScoreLineRepo, EnrollCollegeService enrollCollegeService, EnrollStudentPlanService enrollStudentPlanService, EnrollMajorScoreLineService enrollMajorScoreLineService, professionalBeanService professionalBeanService, ExamineeService examineeService, EnrollBatchService enrollBatchService, CollegeLevelService collegeLevelService, CollegeLineService collegeLineService, SecondChoiceService secondChoiceService, ProfessionalBeanRepo professionalBeanRepo, EnrollGuideService enrollGuideService, SecondChoiceRepo secondChoiceRepo) {
         this.collegeProbabilityService = collegeProbabilityService;
         this.enrollCollegeEnrollBatchRepo = enrollCollegeEnrollBatchRepo;
         this.enrollCollegeScoreLineRepo = enrollCollegeScoreLineRepo;
@@ -87,6 +91,7 @@ public class CollegeQueryController {
         this.secondChoiceService = secondChoiceService;
         this.professionalBeanRepo = professionalBeanRepo;
         this.enrollGuideService = enrollGuideService;
+        this.secondChoiceRepo = secondChoiceRepo;
     }
 
 //    private Map<Long, ProfessionalBean> getEnrollCollegeEnrollBatchMap() {
@@ -266,14 +271,22 @@ public class CollegeQueryController {
 
     /**
      * 保存初选结果
-     *
-     * @param
-     * @return
      */
     @PutMapping
     @Transactional
     public void saveFirstChoiceResult(@RequestBody List<Long> enrollCollegeEnrollBatchIds, @RequestParam Long examineeId) {
-        List<ProfessionalBean> collect = professionalBeans_static.stream().filter(professionalBean -> enrollCollegeEnrollBatchIds.contains(professionalBean.getEnrollCollegeEnrollBatch())).collect(Collectors.toList());
+        // 筛选表格中不存在初选结果,再去保存,不需要删除所有记录
+        List<Long> enrollCollegeEnrollBatchId = professionalBeanRepo.findAllByExamineeId(examineeId).stream().map(ProfessionalEntity::getEnrollCollegeEnrollBatch).collect(Collectors.toList());
+        List<Long> filterParam = enrollCollegeEnrollBatchIds.stream().filter(en->!enrollCollegeEnrollBatchId.contains(en)).collect(Collectors.toList());
+        // 需要删除表格中存在但是请求参数中不存在的记录,手动删除精选中的结果
+        List<Long> filterDeleteParam = enrollCollegeEnrollBatchId.stream().filter(en->!enrollCollegeEnrollBatchIds.contains(en)).collect(Collectors.toList());
+        if (filterDeleteParam.size() != 0) {
+            secondChoiceRepo.deleteByFirstChoiceEnrollCollegeEnrollId(filterDeleteParam);
+            professionalBeanRepo.deleteByEnrollCollegeEnrollBatchId(filterDeleteParam);
+        }
+        List<ProfessionalBean> collect = professionalBeans_static.stream()
+                .filter(professionalBean -> filterParam.contains(professionalBean.getEnrollCollegeEnrollBatch())
+                ).collect(Collectors.toList());
         List<ProfessionalEntity> professionalEntities = new ArrayList<>();
         collect.forEach(firstChoice -> {
             ProfessionalEntity professionalEntity = new ProfessionalEntity();
@@ -304,13 +317,8 @@ public class CollegeQueryController {
             if (Objects.nonNull(firstChoice.getLevels()) && firstChoice.getLevels().size() != 0) {
                 collegeLevelService.findByName(firstChoice.getLevels()).ifPresent(professionalEntity::setLevels);
             }
-//            if (Objects.isNull(professionalEntity.getLevels())){
-//                professionalEntity.setLevels(null);
-//            }
         });
-        //delete all before save all
-        professionalBeanRepo.deleteAllByExamineeId(examineeId);
-        professionalBeanService.saveAll(professionalEntities);
+        List<ProfessionalEntity> professionalEntities1 = professionalBeanService.saveAll(professionalEntities);
     }
 
     /**
@@ -395,7 +403,6 @@ public class CollegeQueryController {
 //        });
 //    }
 
-
     /**
      * 根据考生id查询精选结果
      */
@@ -437,29 +444,30 @@ public class CollegeQueryController {
         String deskName = "精选专业表";
         String sheetName = "精选结果";
         List<String> field = new ArrayList<>(Arrays.asList("专业名", "所属学校", "年份(year)", "学费", "学制", "招生批次", "最低分数(minScore)", "最低位次(minRank)", "平均分(averageScore)"
-                , "招生人数(enrollCount)", "线差(scoreLineDiff)", "招生简章"
+                , "招生人数(enrollCount)", "线差(scoreLineDiff)"
         ));
         List<List> listList = new ArrayList<>();
-        List list = new ArrayList();
+
         List<QueryEnrollCollegeMajorBean_demo> search = secondChoiceService.search(examineeId);
         if (search.size() == 0){
             throw new RuntimeException("该考生不存在精选结果");
         }
         for (QueryEnrollCollegeMajorBean_demo secondChoiceBean : search) {
+            List list = new ArrayList();
             list.add(secondChoiceBean.getName());
             list.add(secondChoiceBean.getEnrollCollege().getName());
             list.add(secondChoiceBean.getYear());
             list.add(secondChoiceBean.getPrice());
             list.add(secondChoiceBean.getYearOfStudy());
-            list.add(secondChoiceBean.getEnrollBatch());
+            list.add(secondChoiceBean.getEnrollBatch().getName());
             list.add(secondChoiceBean.getMinScore());
             list.add(secondChoiceBean.getMinRank());
             list.add(secondChoiceBean.getAverageScore());
             list.add(secondChoiceBean.getEnrollCount());
             list.add(secondChoiceBean.getScoreLineDiff());
 //            list.add(secondChoiceBean.getEnrollCollege().getEnrollCollegeGuides());
+            listList.add(list);
         }
-        listList.add(list);
         ExportExcelUtils.export(deskName, httpServletResponse, sheetName, field, listList);
     }
 
@@ -481,10 +489,7 @@ public class CollegeQueryController {
      * 查询大学招生简章
      */
     @GetMapping("guides")
-    public List<EnrollGuide> getGuide(@RequestParam Long enrollCollegeId){
-        return enrollGuideService.fromEnrollCollegeId(enrollCollegeId);
+    public List<EnrollGuide> getGuide(@RequestParam Long enrollCollegeEnrollBatchId){
+        return enrollGuideService.fromEnrollCollegeId(enrollStudentPlanService.getEnrollCollegeId(enrollCollegeEnrollBatchId).get(0));
     }
-
-
-
 }

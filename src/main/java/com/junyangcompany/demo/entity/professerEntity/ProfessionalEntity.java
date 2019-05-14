@@ -69,14 +69,14 @@ public class ProfessionalEntity {
     @JoinColumn(name = "planLine_id")
     private List<PlanLine> planLInes;
 
-//    @OneToMany(cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
-//    @JoinColumn(name = "secondChoiceId")
-//    private List<QueryEnrollCollegeMajorBean_demo> secondChoices = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    @JoinColumn(name = "secondChoiceId")
+    private List<QueryEnrollCollegeMajorBean_demo> secondChoices = new ArrayList<>();
 
     /**
      * 考生信息
      */
-    @ManyToOne(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.LAZY)
     private Examinee examinee;
 
     @Override
@@ -102,6 +102,82 @@ public class ProfessionalEntity {
                 ", planLInes=" + planLInes +
                 ", examinee=" + examinee +
                 '}';
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setEnrollCollegeEnrollBatch(Long enrollCollegeEnrollBatch) {
+        this.enrollCollegeEnrollBatch = enrollCollegeEnrollBatch;
+    }
+
+    public void setSeq(Long seq) {
+        this.seq = seq;
+    }
+
+    public void setScienceAndArt(ScienceAndArt scienceAndArt) {
+        this.scienceAndArt = scienceAndArt;
+    }
+
+    public void setProvinceId(Long provinceId) {
+        this.provinceId = provinceId;
+    }
+
+    public void setCollegeName(String collegeName) {
+        this.collegeName = collegeName;
+    }
+
+    public void setBatchNames(List<EnrollBatch> batchNames) {
+        this.batchNames = batchNames;
+    }
+
+    public void setCollegeCode(String collegeCode) {
+        this.collegeCode = collegeCode;
+    }
+
+    public void setCollegeLines(List<CollegeLine> collegeLines) {
+        this.collegeLines = collegeLines;
+    }
+
+    public void setProbability(Integer probability) {
+        this.probability = probability;
+    }
+
+    public void setMaxProbability(Integer maxProbability) {
+        this.maxProbability = maxProbability;
+    }
+
+    public void setMinProbability(Integer minProbability) {
+        this.minProbability = minProbability;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setRank(Integer rank) {
+        this.rank = rank;
+    }
+
+    public void setMinRank(Integer minRank) {
+        this.minRank = minRank;
+    }
+
+    public void setMaxRank(Integer maxRank) {
+        this.maxRank = maxRank;
+    }
+
+    public void setLevels(List<CollegeLevel> levels) {
+        this.levels = levels;
+    }
+
+    public void setPlanLInes(List<PlanLine> planLInes) {
+        this.planLInes = planLInes;
+    }
+
+    public void setExaminee(Examinee examinee) {
+        this.examinee = examinee;
     }
 }
 

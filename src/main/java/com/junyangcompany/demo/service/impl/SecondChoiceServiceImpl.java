@@ -62,4 +62,13 @@ public class SecondChoiceServiceImpl implements SecondChoiceService {
     public List<QueryEnrollCollegeMajorBean_demo> search(Long examineeId) {
         return secondChoiceRepo.searchsecondChoice(examineeId);
     }
+
+    /**
+     * 在重新保存大学的时候同步删除该大学下所有的专业
+     * @param firstChoiceId
+     */
+    @Override
+    public void deleteByFirstChoiceId(List<Long> firstChoiceId) {
+        secondChoiceRepo.deleteAllByProfessionalEntity(firstChoiceId);
+    }
 }

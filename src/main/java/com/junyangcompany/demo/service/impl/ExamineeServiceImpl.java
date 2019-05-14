@@ -41,7 +41,8 @@ public class ExamineeServiceImpl implements ExamineeService {
     public Examinee addExaminee(Examinee examinee,HttpServletRequest httpServletRequest) {
         User userFromToken = jwtTokenUtil.getUserFromToken(httpServletRequest);
         examinee.setUser(userFromToken);
-        examinee.getProfessionalEntities().clear();
+//        examinee.setProfessionalEntities(null);
+//        examinee.setQueryEnrollCollegeMajorBeanDemos(null);
         Examinee save = examineeRepo.save(examinee);
         return save;
     }

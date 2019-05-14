@@ -33,4 +33,9 @@ public class EnrollStudentPlanServiceImpl implements EnrollStudentPlanService {
     public List<String> getEnrollMajorName(Long enrollCollegeEnrollBatchId) {
         return enrollStudentPlanRepo.getEnrollStudentPlanNameByEnrollCollegeEnrollBatch(enrollCollegeEnrollBatchId);
     }
+
+    @Override
+    public List<Long> getEnrollCollegeId(Long enrollCollegeEneollBatchId) {
+        return enrollStudentPlanRepo.getEnrollCollegeId(enrollCollegeEneollBatchId);
+    }
 }

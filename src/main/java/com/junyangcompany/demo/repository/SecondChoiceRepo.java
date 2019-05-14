@@ -15,4 +15,12 @@ public interface SecondChoiceRepo extends JpaRepository<QueryEnrollCollegeMajorB
     @Modifying
     @Query(value = "DELETE from query_enroll_college_major_bean_demo where examinee_id = ?1 and professional_entity_id = ?2",nativeQuery = true)
     void deleteByExamineeAndProfessionalEntity(Long examineeId,Long professionalEntityId);
+
+    @Modifying
+    @Query(value = "DELETE from query_enroll_college_major_bean_demo WHERE professional_entity_id in ?1",nativeQuery = true)
+    void deleteAllByProfessionalEntity(List<Long> ids);
+
+    @Modifying
+    @Query(value = "DELETE from query_enroll_college_major_bean_demo where professional_entity_id in (SELECT id from professional_entity where enroll_college_enroll_batch = ?1)\n",nativeQuery = true)
+    void deleteByFirstChoiceEnrollCollegeEnrollId(List<Long> enrollCollegeEnrollBatchId);
 }
