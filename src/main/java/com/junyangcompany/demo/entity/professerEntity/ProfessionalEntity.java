@@ -100,7 +100,7 @@ public class ProfessionalEntity {
                 ", maxRank=" + maxRank +
                 ", levels=" + levels +
                 ", planLInes=" + planLInes +
-                ", examinee=" + examinee +
+                ", examineeId=" + examinee +
                 '}';
     }
 

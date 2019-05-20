@@ -26,18 +26,18 @@ public class ProfessionalBean {
 
     private Long enrollCollegeEnrollBatch;
 
-    @NonNull
     private Long seq; // 位次
 
-    @NonNull
     private ScienceAndArt scienceAndArt; // 文理科
 
-    @NonNull
     private Long provinceId;
 
-    private String collegeName;
+    private Long provinceIdForCollege;
 
-//    private String batchName;
+    // 条件中的大学所在省份
+    private List<Long> provinceIdForColleges;
+
+    private String collegeName;
 
     private List<String> batchNames = new ArrayList<>();
 
@@ -75,7 +75,7 @@ public class ProfessionalBean {
     /**
      * 考生信息
      */
-    private Long examinee;
+    private Long examineeId;
 }
 
 

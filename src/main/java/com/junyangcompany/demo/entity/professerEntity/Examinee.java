@@ -1,6 +1,7 @@
 package com.junyangcompany.demo.entity.professerEntity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.junyangcompany.demo.entity.Province;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import com.junyangcompany.demo.security.mapping.User;
 import lombok.AllArgsConstructor;
@@ -48,7 +49,12 @@ public class Examinee {
     /**
      * 位次
      */
-    private Integer weiCi;
+    private Long weiCi;
+
+    /**
+     * 省份
+     */
+    private Long provinceId;
 
     /**
      * 测评师初选结果
@@ -98,7 +104,7 @@ public class Examinee {
         this.score = score;
     }
 
-    public void setWeiCi(Integer weiCi) {
+    public void setWeiCi(Long weiCi) {
         this.weiCi = weiCi;
     }
 

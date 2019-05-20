@@ -41,9 +41,11 @@ public class PrepareCollegeData implements CommandLineRunner {
             List<EnrollCollegeEnrollBatch> enrollCollegeEnrollBatches = enrollCollegeEnrollBatchRepo.findAll();
             for (EnrollCollegeEnrollBatch enrollCollegeEnrollBatch : enrollCollegeEnrollBatches) {
                 String name = enrollCollegeEnrollBatch.getEnrollCollege().getName();
+                Long provinceIdForCollege = enrollCollegeEnrollBatch.getEnrollCollege().getProvince().getId();
                 ArrayList<String> strings = new ArrayList<>();
                 strings.add(enrollCollegeEnrollBatch.getEnrollBatch().getName());
                 ProfessionalBean professionalEntity = new ProfessionalBean();
+                professionalEntity.setProvinceIdForCollege(provinceIdForCollege);
                 professionalEntity.setBatchNames(strings);
                 professionalEntity.setCollegeName(name);
                 professionalEntity.setCollegeCode(enrollCollegeEnrollBatch.getEnrollCollege().getCode());

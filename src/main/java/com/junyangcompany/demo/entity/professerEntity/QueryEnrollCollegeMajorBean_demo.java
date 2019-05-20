@@ -5,6 +5,7 @@ import com.junyangcompany.demo.entity.EnrollCollege;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.persistence.*;
 
@@ -22,6 +23,7 @@ public class QueryEnrollCollegeMajorBean_demo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
 
     private Long enrollMajorScoreLine_id;
 

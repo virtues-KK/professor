@@ -33,6 +33,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     private UserRepo userRepo;
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        return super.shouldNotFilter(request);
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest
             , HttpServletResponse httpServletResponse
             , FilterChain filterChain) throws ServletException, IOException {
@@ -44,7 +49,7 @@ public class AuthenticationFilter extends OncePerRequestFilter {
             String usernameFromToken = jwtTokenUtil.getUsernameFromToken(token);
             UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(usernameFromToken,passWord);
             User byUsername = userRepo.findByUsername(usernameFromToken);
-            if (Objects.nonNull(byUsername.getUsername())){
+            if (Objects.nonNull(byUsername) && Objects.nonNull(byUsername.getUsername())){
                 SecurityContextHolder.getContext().setAuthentication(usernamePasswordAuthenticationToken);
             }
         }
