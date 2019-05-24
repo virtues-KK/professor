@@ -4,16 +4,20 @@ package com.junyangcompany.demo.repository;
 import com.junyangcompany.demo.bean.QueryEnrollCollegeCondition;
 import com.junyangcompany.demo.entity.CollegeLevel;
 import com.junyangcompany.demo.entity.EnrollCollege;
+import com.junyangcompany.demo.entity.EnrollCollegeScoreLine;
+import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Query;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Predicate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * @author ldx
@@ -117,4 +121,5 @@ public interface EnrollCollegeRepo extends JpaRepository<EnrollCollege, Long>, J
         return this.findAll(specification,pageable);
 
     }
+
 }

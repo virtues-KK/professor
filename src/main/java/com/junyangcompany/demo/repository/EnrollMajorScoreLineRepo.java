@@ -1,6 +1,7 @@
 package com.junyangcompany.demo.repository;
 
 import com.junyangcompany.demo.bean.response.SecondMajors;
+import com.junyangcompany.demo.entity.EnrollCollege;
 import com.junyangcompany.demo.entity.EnrollCollegeEnrollBatch;
 import com.junyangcompany.demo.entity.EnrollMajorScoreLine;
 import com.junyangcompany.demo.entity.EnrollStudentPlan;
@@ -30,6 +31,7 @@ public interface EnrollMajorScoreLineRepo extends JpaRepository<EnrollMajorScore
             "\tb.enroll_college_enroll_batch_id in ?1", nativeQuery = true)
     Page<List<QueryEnrollCollegeMajorBean_demo>> getMajorScoreLine(List<Long> enrollCollegeEnrollBatch, Pageable pageable);
 
+
     //根据enrollCollegeEnrollBatchId 查询enrollStudentPlan和enrollScoreLine
 //    @Query(
 //            value = "select new com.junyangcompany.demo.bean.response.SecondMajors(a.name,a.year,b.science_art,a.price,b.year_of_study,a.enroll_batch_id,a.max_score,a.min_rank,a.average_score,a.enroll_count,a.score_line_diff,a.id,a.enroll_college_id) " +
@@ -38,10 +40,13 @@ public interface EnrollMajorScoreLineRepo extends JpaRepository<EnrollMajorScore
 //    Page<List<SecondMajors>> getMajorOptions(List<Long> enrollCollegeEnrollBatch, Pageable pageable);
 
     @Query(
-            value = "select new com.junyangcompany.demo.bean.response.SecondMajors(a.name,a.year,a.enrollStudentPlan.scienceArt,a.price,a.enrollBatch,a.maxScore,a.minRank,a.averageScore,a.enrollCount,a.scoreLineDiff,a.enrollCollege) " +
+            value = "select new com.junyangcompany.demo.bean.response.SecondMajors(a.id,a.name,a.year,a.enrollStudentPlan.scienceArt,a.price,a.enrollBatch,a.maxScore,a.minRank,a.averageScore,a.enrollCount,a.scoreLineDiff,a.enrollCollege,a.enrollStudentPlan.yearOfStudy,a.enrollStudentPlan) " +
                     "from EnrollMajorScoreLine as a left join a.enrollStudentPlan as b on a.enrollStudentPlan = b where b.enrollCollegeEnrollBatch in ?1 and b.scienceArt = ?2"
     )
     List<SecondMajors> getMajorOptions(List<EnrollCollegeEnrollBatch> enrollCollegeEnrollBatch, ScienceAndArt scienceAndArt);
+
+    @Query(value = "select * from enroll_major_score_line where enroll_college_id = ?1 and enroll_student_plan_id = ?2",nativeQuery = true)
+    List<EnrollMajorScoreLine> findByEnrollCollegeAndEnrollStudentPlan(Long enrollCollege, Long enrollStudentPlan);
 
 
     @Query(value = "SELECT min_rank,min_score FROM enroll_major_score_line WHERE " +

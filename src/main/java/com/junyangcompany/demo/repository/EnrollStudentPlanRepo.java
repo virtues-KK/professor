@@ -151,4 +151,8 @@ public interface EnrollStudentPlanRepo extends JpaRepository<EnrollStudentPlan, 
 
     //查询招生大学下面的招生专业
     Page<EnrollStudentPlan> findAllByEnrollCollege_IdAndScienceArtAndProvince_IdAndEnrollBatch_Id(Long enrollCollegeId, ScienceAndArt scienceAndArt, Long provinceId, Long batchId, Pageable pageable);
+
+
+    @Query(value = "select enroll_college_id from enroll_student_plan where enroll_college_enroll_batch_id = ?1 LIMIT 1", nativeQuery = true)
+    Long findAllByEnrollCollegeEnrollBatchId(Long enrollCollegeEnrollBatch);
 }

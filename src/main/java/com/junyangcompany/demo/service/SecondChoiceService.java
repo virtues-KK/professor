@@ -1,5 +1,6 @@
 package com.junyangcompany.demo.service;
 
+import com.junyangcompany.demo.bean.request.SecondBean;
 import com.junyangcompany.demo.entity.professerEntity.QueryEnrollCollegeMajorBean_demo;
 
 import javax.servlet.http.HttpServletRequest;
@@ -15,4 +16,5 @@ public interface SecondChoiceService {
     void delete(List<Long> ids);
     List<QueryEnrollCollegeMajorBean_demo> search(Long examineeId);
     void deleteByFirstChoiceId(List<Long> firstChoiceId);
+    void saveSecondChoice(List<SecondBean> secondBeans,Long examineeId);
 }

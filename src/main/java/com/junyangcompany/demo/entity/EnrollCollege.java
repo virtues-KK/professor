@@ -112,5 +112,32 @@ public class EnrollCollege {
      * 计划招生总数量
      */
     private Integer planCount;
+
+    @Override
+    public String toString() {
+        return "EnrollCollege{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", province=" + province +
+                ", enrollProvince=" + enrollProvince +
+                ", collegeLevel=" + collegeLevel +
+                ", collegeType=" + collegeType +
+                ", enrollStudentPlans=" + enrollStudentPlans +
+                ", enrollCollegeMajor=" + enrollCollegeMajor +
+                ", city='" + city + '\'' +
+                ", code='" + code + '\'' +
+                ", year=" + year +
+                ", appRank=" + appRank +
+                ", netRank=" + netRank +
+                ", collegeInitials='" + collegeInitials + '\'' +
+                ", schoolBadge='" + schoolBadge + '\'' +
+                ", enrollCollegeDes=" + enrollCollegeDes +
+                ", grade=" + grade +
+                ", isPublic=" + isPublic +
+                ", enrollCollegeGuides=" + enrollCollegeGuides +
+                ", college=" + college +
+                ", planCount=" + planCount +
+                '}';
+    }
 }
 

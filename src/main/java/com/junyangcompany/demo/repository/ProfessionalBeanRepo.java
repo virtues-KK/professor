@@ -29,4 +29,7 @@ public interface ProfessionalBeanRepo extends JpaRepository<ProfessionalEntity,L
     @Modifying
     @Query(value = "delete from professional_entity where enroll_college_enroll_batch in ?1",nativeQuery = true)
     void deleteByEnrollCollegeEnrollBatchId(List<Long> filterDeleteParam);
+
+    @Query(value = "select Id from professional_entity where examinee_id = ?1 and enroll_college_enroll_batch = ?2",nativeQuery = true)
+    Long findIdByExamineeIdAndEnrollCollegeEnrollBatch(Long examineeId,Long enrollCollegeEnrollBatch);
 }

@@ -15,6 +15,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -24,15 +25,14 @@ public class ProfessionalEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long enrollCollegeId;
+
     private Long enrollCollegeEnrollBatch;
 
-    @NonNull
     private Long seq; // 位次
 
-    @NonNull
     private ScienceAndArt scienceAndArt; // 文理科
 
-    @NonNull
     private Long provinceId;
 
     private String collegeName;
@@ -72,6 +72,10 @@ public class ProfessionalEntity {
     @OneToMany(cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
     @JoinColumn(name = "secondChoiceId")
     private List<QueryEnrollCollegeMajorBean_demo> secondChoices = new ArrayList<>();
+
+    @OneToMany(cascade = CascadeType.REMOVE,fetch = FetchType.LAZY)
+    private List<SecondChoiceEntity> secondChoiceEntitys;
+
 
     /**
      * 考生信息

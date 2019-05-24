@@ -16,6 +16,7 @@ public class FirstChoice implements Comparable{
     private Long enrollCollegeEnrollBatch;
     private String collegeName;
     private String batchName;
+    private String collegeProvince;
     private String collegeCode;
     private Integer probability;
     private String type;

@@ -105,4 +105,8 @@ public interface EnrollCollegeScoreLineRepo extends JpaRepository<EnrollCollegeS
     @Query("from EnrollCollegeScoreLine p where  p.scienceArt = :scienceArt and p.year >= :queryYear and p.enrollCollegeEnrollBatch.id= :enrollCollegeEnrollBatchId order by p.year desc, p.minScore desc")
     List<EnrollCollegeScoreLine> findByyearAndEnrollCollegeEnrollBatch(@Param("scienceArt") ScienceAndArt scienceAndArt, @Param("enrollCollegeEnrollBatchId") Long enrollCollegeEnrollBatchId, @Param("queryYear") Integer queryYear);
 
+
+    @Query(value = "select * from enroll_college_score_line where enroll_college_enroll_batch_id = ?1 and science_art = ?2 ",nativeQuery = true)
+    List<EnrollCollegeScoreLine> findByEnrollCollegeEnrollBatchAndScienceArt(Long enrollCollegeEnrollBatchId, Integer scienceAndArt);
+
 }

@@ -1,7 +1,12 @@
 package com.junyangcompany.demo.service.impl;
 
+import com.junyangcompany.demo.bean.request.SecondBean;
 import com.junyangcompany.demo.entity.professerEntity.Examinee;
+import com.junyangcompany.demo.entity.professerEntity.ProfessionalEntity;
 import com.junyangcompany.demo.entity.professerEntity.QueryEnrollCollegeMajorBean_demo;
+import com.junyangcompany.demo.entity.professerEntity.SecondChoiceEntity;
+import com.junyangcompany.demo.repository.ExamineeRepo;
+import com.junyangcompany.demo.repository.SecondChoiceEntityRepo;
 import com.junyangcompany.demo.repository.SecondChoiceRepo;
 import com.junyangcompany.demo.security.mapping.User;
 import com.junyangcompany.demo.security.utils.JwtTokenUtil;
@@ -11,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -28,10 +34,16 @@ public class SecondChoiceServiceImpl implements SecondChoiceService {
 
     private final JwtTokenUtil jwtTokenUtil;
 
+    private final SecondChoiceEntityRepo secondChoiceEntityRepo;
+
+    private final ExamineeRepo examineeRepo;
+
     @Autowired
-    public SecondChoiceServiceImpl(SecondChoiceRepo secondChoiceRepo, JwtTokenUtil jwtTokenUtil) {
+    public SecondChoiceServiceImpl(SecondChoiceRepo secondChoiceRepo, JwtTokenUtil jwtTokenUtil, SecondChoiceEntityRepo secondChoiceEntityRepo, ExamineeRepo examineeRepo) {
         this.secondChoiceRepo = secondChoiceRepo;
         this.jwtTokenUtil = jwtTokenUtil;
+        this.secondChoiceEntityRepo = secondChoiceEntityRepo;
+        this.examineeRepo = examineeRepo;
     }
 
     @Override
@@ -70,5 +82,18 @@ public class SecondChoiceServiceImpl implements SecondChoiceService {
     @Override
     public void deleteByFirstChoiceId(List<Long> firstChoiceId) {
         secondChoiceRepo.deleteAllByProfessionalEntity(firstChoiceId);
+    }
+
+    @Override
+    public void saveSecondChoice(List<SecondBean> secondBeans, Long examineeId) {
+        List<SecondChoiceEntity> list = new ArrayList<>();
+        Examinee examinee = examineeRepo.findById(examineeId).get();
+        secondBeans.forEach(secondBean -> {
+            SecondChoiceEntity secondChoiceEntity = SecondChoiceEntity.builder().enrollCollegeEnrollBatch(secondBean.getEnrollCollegeEnrollBatch()).enrollCollegeId(secondBean.getEnrollCollegeId()).professionalEntity(ProfessionalEntity.builder()
+                    .id(secondBean.getProfessionalEntityId()).build()).enrollStudentPlanId(secondBean.getEnrollStudentPlanId()).examinee(examinee).build();
+            list.add(secondChoiceEntity);
+        });
+        secondChoiceEntityRepo.deleteByExaminee(Examinee.builder().id(examineeId).build());
+        secondChoiceEntityRepo.saveAll(list);
     }
 }

@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.crypto.SecretKey;
+import javax.mail.MessagingException;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -124,6 +125,7 @@ public class AuthService {
         mailService.send(email);
         try {
             userToAdd.setIsValid(false);
+            userToAdd.setRealName(rawPassword);
             userRepository.save(userToAdd);
             return new ResponseEntity<>(
                     userToAdd,
@@ -134,6 +136,7 @@ public class AuthService {
             return ResponseEntity.badRequest().body("注册出问题啦!!");
         }
     }
+
     public ResponseEntity checkEmail(String username){
         if (userRepository.findByUsername(username) != null){
             userRepository.updateUserInformation(username);
@@ -191,6 +194,24 @@ public class AuthService {
             e.printStackTrace();
         }
     }
+
+    // 校验对象并找回密码
+    public void retrievePassWord(String email) throws MessagingException {
+        User byEmail = userRepository.findByEmail(email);
+        if (Objects.nonNull(byEmail) && Objects.nonNull(byEmail.getRealName())){
+            String content1= "是不是忘了密码了?这次就算了"+ byEmail.getRealName() + "再忘了你就换个邮箱注册一下了只能";
+            email email1 = com.junyangcompany.demo.security.mapping.email.builder()
+                    .userEmail(byEmail.getEmail())
+                    .content(content1)
+                    .subject("亲爱的,你好!")
+                    .build();
+            mailService.send(email1);
+        }else {
+            throw new RuntimeException("邮箱是不是有问题?还是系统有问题?还是别的什么地方有问题!");
+        }
+    }
+
+
 
 
 }

@@ -1,6 +1,8 @@
 package com.junyangcompany.demo.bean.response;
 
+import com.junyangcompany.demo.bean.request.SecondBean;
 import com.junyangcompany.demo.entity.EnrollCollege;
+import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -20,7 +22,12 @@ import java.util.Map;
 @AllArgsConstructor
 @Builder
 public class Response{
+    Long enrollMajorScoreLine_id;
     String name;
+    ScienceAndArt scienceAndArt;
     List<Map<String,Object>> scoreInformation;
+    Long EnrollStudentPlanId;
     EnrollCollege enrollCollege;
+    private Long EnrollCollegeEnrollBatch;
+    private SecondBean secondBean;
 }

@@ -30,6 +30,8 @@ public class User {
 
     private String password;
 
+    private String realName;
+
     @ManyToMany(targetEntity = Role.class, fetch = FetchType.EAGER)
     private List<Role> Roles;
 

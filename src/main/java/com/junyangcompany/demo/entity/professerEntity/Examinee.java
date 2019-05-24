@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -66,10 +67,13 @@ public class Examinee {
     /**
      * 测评师精选结果
      */
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
-    @JoinColumn(name = "examinee_id")
-    @JsonIgnore
-    private List<QueryEnrollCollegeMajorBean_demo> queryEnrollCollegeMajorBeanDemos;
+//    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+//    @JoinColumn(name = "examinee_id")
+//    @JsonIgnore
+//    private List<QueryEnrollCollegeMajorBean_demo> queryEnrollCollegeMajorBeanDemos;
+
+//    @OneToMany(cascade = {CascadeType.ALL},fetch = FetchType.LAZY)
+//    private List<SecondChoiceEntity> secondChoiceEntitys;
 
     /**
      * 当前用户信息
@@ -112,9 +116,9 @@ public class Examinee {
         this.professionalEntities = professionalEntities;
     }
 
-    public void setQueryEnrollCollegeMajorBeanDemos(List<QueryEnrollCollegeMajorBean_demo> queryEnrollCollegeMajorBeanDemos) {
-        this.queryEnrollCollegeMajorBeanDemos = queryEnrollCollegeMajorBeanDemos;
-    }
+//    public void setQueryEnrollCollegeMajorBeanDemos(List<QueryEnrollCollegeMajorBean_demo> queryEnrollCollegeMajorBeanDemos) {
+//        this.queryEnrollCollegeMajorBeanDemos = queryEnrollCollegeMajorBeanDemos;
+//    }
 
     public void setUser(User user) {
         this.user = user;

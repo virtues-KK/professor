@@ -18,6 +18,7 @@ import lombok.Data;
 @AllArgsConstructor
 public class SecondMajors {
 
+    private Long id;
     private String name;
     private Integer year;
     private ScienceAndArt scienceArt;
@@ -29,5 +30,11 @@ public class SecondMajors {
     private Integer enrollCount;
     private Integer scoreLineDiff;
     private EnrollCollege  enrollCollege;
+    /**
+     * 学年
+     */
+    private Integer yearOfStudy;
+    private EnrollStudentPlan enrollStudentPlan;
+
 
 }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.crypto.SecretKey;
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.net.URLDecoder;
 
@@ -43,6 +44,12 @@ public class LoginController {
     public ResponseEntity EmailCheck(@PathVariable String string) throws Exception {
         String username = URLDecoder.decode(string, "UTF-8");
         return authService.checkEmail(username);
+    }
+
+    //找回密码
+    @GetMapping("/findBackPassword")
+    public void retrievePassword(String email) throws MessagingException {
+        authService.retrievePassWord(email);
     }
 
 
