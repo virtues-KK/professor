@@ -1,5 +1,7 @@
 package com.junyangcompany.demo.repository;
 
+import com.junyangcompany.demo.bean.EnrollCollegeEnrollBatchAndEnrollCollegeBean;
+import com.junyangcompany.demo.entity.EnrollBatch;
 import com.junyangcompany.demo.entity.EnrollCollegeEnrollBatch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -84,4 +86,17 @@ public interface EnrollCollegeEnrollBatchRepo extends JpaRepository<EnrollColleg
                                                        @Param("enrollBatchIdList") List<Long> enrollBatchIdList,
                                                        @Param("sortRule") Integer sortRule,
                                                        Pageable pageable);
+
+    @Query(value = "from EnrollCollegeEnrollBatch where province.id = ?1")
+    List<EnrollCollegeEnrollBatch> findEnrollBatchByProVinceId(Long provinceId);
+
+    @Query(value = "from EnrollCollegeEnrollBatch as a where a.id = ?1 ")
+    EnrollCollegeEnrollBatch findByEnrollCollegeEnrollBatch(Long bid);
+
+    @Query(value ="SELECT id FROM enroll_college_enroll_batch as a where a.enroll_college_id in (SELECT id from enroll_college as b where b.name LIKE '%'||?1||'%' and enroll_province_id = ?2 )",nativeQuery = true)
+    List<Long> findIdByEnrollCollegeName( String enrollCollegeName, Long provinceId);
+
+    @Query(value ="SELECT id FROM EnrollCollegeEnrollBatch as a where a.enrollCollege.id in (SELECT id from EnrollCollege as b where b.name LIKE concat('%',?1,'%') and enrollProvince.id = ?2 )")
+    List<Long> findIdByEnrollCollegeName1( String enrollCollegeName, Long provinceId);
+
 }

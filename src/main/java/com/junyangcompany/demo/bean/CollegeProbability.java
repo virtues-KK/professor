@@ -1,15 +1,14 @@
 package com.junyangcompany.demo.bean;
 
 import com.junyangcompany.demo.entity.enumeration.ChongShouBao;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Builder
 @Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class CollegeProbability {
 
     Long collegeId;

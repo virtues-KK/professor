@@ -17,4 +17,5 @@ public class CollegeLine1 {
         public Integer minRank;
         public Integer enrollCount;
         public Integer year;
+        public String batch;
 }

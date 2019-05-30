@@ -14,6 +14,7 @@ import org.springframework.data.repository.query.Param;
 import javax.persistence.QueryHint;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Optional;
 
 
 public interface EnrollStudentPlanRepo extends JpaRepository<EnrollStudentPlan, Long> {
@@ -45,7 +46,7 @@ public interface EnrollStudentPlanRepo extends JpaRepository<EnrollStudentPlan, 
      * "SELECT p.id,p.name,p.code,p.plan_count,p.college_id FROM enroll_student_plan p " +
      * "LEFT JOIN college_first_alternative_enroll_student_plans cf ON p.id=cf.enroll_student_plans_id " +
      * "LEFT JOIN college_first_alternative c ON cf.college_first_alternative_id=c.id " +
-     * "WHERE  c.college_id= :collegeId AND c.user_id= :userId " +
+     * "WHERE  c.college_id= :enrollCollegeEnrollBatchId AND c.user_id= :userId " +
      * "UNION ALL  " +
      * "SELECT * FROM ( " +
      * "SELECT DISTINCT p.id,p.name,p.code,p.plan_count,p.college_id FROM  enroll_student_plan p WHERE p.id IN :ids " +
@@ -54,11 +55,11 @@ public interface EnrollStudentPlanRepo extends JpaRepository<EnrollStudentPlan, 
      * "SELECT p.id,p.name,p.code,p.plan_count,p.college_id FROM enroll_student_plan p " +
      * "LEFT JOIN college_first_alternative_enroll_student_plans cf ON p.id=cf.enroll_student_plans_id " +
      * "LEFT JOIN college_first_alternative c ON cf.college_first_alternative_id=c.id " +
-     * "WHERE  c.college_id= :collegeId AND c.user_id= :userId " +
+     * "WHERE  c.college_id= :enrollCollegeEnrollBatchId AND c.user_id= :userId " +
      * "UNION ALL  " +
      * "SELECT DISTINCT p.id,p.name,p.code,p.plan_count,p.college_id FROM  enroll_student_plan p WHERE p.id IN :ids " +
      * ")alls ")
-     * Page<Object[]> findFirstCollegeMajor(@Param("userId")Long userId, @Param("collegeId")Long collegeId,
+     * Page<Object[]> findFirstCollegeMajor(@Param("userId")Long userId, @Param("enrollCollegeEnrollBatchId")Long enrollCollegeEnrollBatchId,
      * @Param("ids")List<Long>ids, Pageable pageable);
      **/
     @Query(value = "SELECT DISTINCT p.id,p.name,p.code,p.plan_count,p.enroll_college_enroll_batch_id,grade,year_of_study,price FROM  enroll_student_plan p WHERE p.id IN :ids " +
@@ -155,4 +156,11 @@ public interface EnrollStudentPlanRepo extends JpaRepository<EnrollStudentPlan, 
 
     @Query(value = "select enroll_college_id from enroll_student_plan where enroll_college_enroll_batch_id = ?1 LIMIT 1", nativeQuery = true)
     Long findAllByEnrollCollegeEnrollBatchId(Long enrollCollegeEnrollBatch);
+
+    @Query(value = "from EnrollStudentPlan as a where a.enrollCollegeEnrollBatch.id = ?1 and a.scienceArt = ?2")
+    List<EnrollStudentPlan> findAllByEnrollCollegeEnrollBatchIdAndScienceArt(Long enrollCollegeEnrollBatchId, ScienceAndArt scienceAndArt);
+
+
+    @Query(value = "from EnrollStudentPlan as a where a.enrollCollegeEnrollBatch.id in ?1 and a.scienceArt = ?2")
+    List<EnrollStudentPlan> findAllByEnrollCollegeEnrollBatschIdAndScienceArt(List<Long> enrollCollegeEnrollBatchIds, ScienceAndArt scienceAndArt);
 }

@@ -20,4 +20,7 @@ public interface SecondChoiceEntityRepo extends JpaRepository<SecondChoiceEntity
     @Modifying
     @Query(value = "delete from SecondChoiceEntity where enrollCollegeEnrollBatch in ?1")
     void deleteByEnrollCollegeEnrollBatches(List<Long> filterDeleteParam);
+
+    @Query(value = "from SecondChoiceEntity as a where a.examinee.id = ?1 ")
+    List<SecondChoiceEntity> findByExamineeId(Long examineeId);
 }

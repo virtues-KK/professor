@@ -32,6 +32,11 @@ public class ProfessionalBean {
 
     private Long provinceId;
 
+    /**
+     * 大学所在的城市
+     */
+    private String City;
+
     private Long provinceIdForCollege;
 
     // 条件中的大学所在省份

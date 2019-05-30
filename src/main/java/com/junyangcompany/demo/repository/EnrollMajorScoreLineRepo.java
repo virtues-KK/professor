@@ -45,6 +45,7 @@ public interface EnrollMajorScoreLineRepo extends JpaRepository<EnrollMajorScore
     )
     List<SecondMajors> getMajorOptions(List<EnrollCollegeEnrollBatch> enrollCollegeEnrollBatch, ScienceAndArt scienceAndArt);
 
+
     @Query(value = "select * from enroll_major_score_line where enroll_college_id = ?1 and enroll_student_plan_id = ?2",nativeQuery = true)
     List<EnrollMajorScoreLine> findByEnrollCollegeAndEnrollStudentPlan(Long enrollCollege, Long enrollStudentPlan);
 
@@ -79,14 +80,14 @@ public interface EnrollMajorScoreLineRepo extends JpaRepository<EnrollMajorScore
 //     * 院校详情下面的专业分数线-ldx
 //     * 2018-12-12
 //     */
-//    default Page<EnrollMajorScoreLine> findAllByEnrollMajorScoreLine(Long collegeId, Long provinceId, ScienceAndArt scienceAndArt, Integer year, Pageable pageable) {
+//    default Page<EnrollMajorScoreLine> findAllByEnrollMajorScoreLine(Long enrollCollegeEnrollBatchId, Long provinceId, ScienceAndArt scienceAndArt, Integer year, Pageable pageable) {
 //        //构建条件规格对象
 //        Specification<EnrollMajorScoreLine> specification = (Specification<EnrollMajorScoreLine>) (root, criteriaQuery, criteriaBuilder) -> {
 //            List<Predicate> predicates = new ArrayList<>();//条件列表
 //            Join<EnrollMajorScoreLine, EnrollStudentPlan> EnrollStudentJoin = root.join(root.getModel().getSingularAttribute("enrollStudentPlan", EnrollStudentPlan.class), JoinType.LEFT);
-//            if (collegeId != null){
+//            if (enrollCollegeEnrollBatchId != null){
 //                Join<EnrollStudentPlan, College> collegeJoin = EnrollStudentJoin.join("college", JoinType.LEFT);
-//                predicates.add(criteriaBuilder.equal(collegeJoin.get("id"),collegeId));
+//                predicates.add(criteriaBuilder.equal(collegeJoin.get("id"),enrollCollegeEnrollBatchId));
 //            }
 //            if (provinceId != null){
 //                Join<EnrollStudentPlan, Province> provinceJoin = EnrollStudentJoin.join("province", JoinType.LEFT);
@@ -110,4 +111,11 @@ public interface EnrollMajorScoreLineRepo extends JpaRepository<EnrollMajorScore
     List<EnrollMajorScoreLine> findAllByEnrollStudentPlan_IdAndYearBetween(Long enrollStudentPlanId, Integer maxYear, Integer minYear);
 
     List<EnrollMajorScoreLine> findByEnrollStudentPlan_Id(Long enrollStudentPlanId, Sort sort);
+
+
+    @Query(
+            value = "select new com.junyangcompany.demo.bean.response.SecondMajors(a.id,a.name,a.year,a.enrollStudentPlan.scienceArt,a.price,a.enrollBatch,a.maxScore,a.minRank,a.averageScore,a.enrollCount,a.scoreLineDiff,a.enrollCollege,a.enrollStudentPlan.yearOfStudy,a.enrollStudentPlan) " +
+                    "from EnrollMajorScoreLine as a left join a.enrollStudentPlan as b on a.enrollStudentPlan = b where b.enrollCollegeEnrollBatch.id = ?1 and b.scienceArt = ?2"
+    )
+    List<SecondMajors> getMajorOption(Long collegeEnrollBatch,ScienceAndArt scienceAndArt);
 }

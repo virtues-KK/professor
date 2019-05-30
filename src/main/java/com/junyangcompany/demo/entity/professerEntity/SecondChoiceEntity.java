@@ -35,4 +35,7 @@ public class SecondChoiceEntity {
     private Examinee examinee;
 
     private Long enrollCollegeEnrollBatch;
+
+    private Long enrollMajorScoreLineId;
+
 }

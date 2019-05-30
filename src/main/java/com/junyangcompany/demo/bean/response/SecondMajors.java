@@ -5,7 +5,9 @@ import com.junyangcompany.demo.entity.EnrollCollege;
 import com.junyangcompany.demo.entity.EnrollStudentPlan;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * author:pan le

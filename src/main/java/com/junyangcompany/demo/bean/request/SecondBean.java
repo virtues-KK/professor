@@ -21,4 +21,5 @@ public class SecondBean {
     Long professionalEntityId;
     Long examineeId;
     Long enrollCollegeEnrollBatch;
+    Long enrollMajorScoreLineId;
 }

@@ -2,9 +2,7 @@ package com.junyangcompany.demo.entity.enumeration;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 /**
  * 学历等级
@@ -16,8 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
 public enum Grade {
-
-
     /**
      * 本科
      */

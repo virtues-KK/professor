@@ -4,8 +4,6 @@ import com.junyangcompany.demo.entity.CollegeLevel;
 import com.junyangcompany.demo.entity.EnrollBatch;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import lombok.*;
-import org.springframework.lang.NonNull;
-
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +32,8 @@ public class ProfessionalEntity {
     private ScienceAndArt scienceAndArt; // 文理科
 
     private Long provinceId;
+
+    private String city;
 
     private String collegeName;
 

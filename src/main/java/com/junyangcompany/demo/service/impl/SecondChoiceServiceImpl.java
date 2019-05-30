@@ -90,7 +90,7 @@ public class SecondChoiceServiceImpl implements SecondChoiceService {
         Examinee examinee = examineeRepo.findById(examineeId).get();
         secondBeans.forEach(secondBean -> {
             SecondChoiceEntity secondChoiceEntity = SecondChoiceEntity.builder().enrollCollegeEnrollBatch(secondBean.getEnrollCollegeEnrollBatch()).enrollCollegeId(secondBean.getEnrollCollegeId()).professionalEntity(ProfessionalEntity.builder()
-                    .id(secondBean.getProfessionalEntityId()).build()).enrollStudentPlanId(secondBean.getEnrollStudentPlanId()).examinee(examinee).build();
+                    .id(secondBean.getProfessionalEntityId()).build()).enrollStudentPlanId(secondBean.getEnrollStudentPlanId()).examinee(examinee).enrollMajorScoreLineId(secondBean.getEnrollMajorScoreLineId()).build();
             list.add(secondChoiceEntity);
         });
         secondChoiceEntityRepo.deleteByExaminee(Examinee.builder().id(examineeId).build());

@@ -48,7 +48,7 @@ public interface PassProbabilityMetadataRepo extends JpaRepository<PassProbabili
             if (!collegeWithBatchMap.isEmpty()) {
                 Join<PassProbabilityMetadata, EnrollBatch> enrollBatchJoin = root.join("enrollBatch");
                 predicates.add(criteriaBuilder.or(collegeWithBatchMap.entrySet().stream().map(entry -> criteriaBuilder.and(
-                        criteriaBuilder.equal(root.get("collegeId"), entry.getKey()),
+                        criteriaBuilder.equal(root.get("enrollCollegeEnrollBatchId"), entry.getKey()),
                         criteriaBuilder.equal(enrollBatchJoin.get("id"), entry.getValue())
                 )).toArray(Predicate[]::new)));
             }

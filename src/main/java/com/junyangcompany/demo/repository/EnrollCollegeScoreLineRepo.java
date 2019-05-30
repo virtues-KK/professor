@@ -29,15 +29,15 @@ public interface EnrollCollegeScoreLineRepo extends JpaRepository<EnrollCollegeS
 
     Page<EnrollCollegeScoreLine> findTopByEnrollCollege_IdAndProvince_IdAndScienceArt(Long enrollCollegeId, Long provinceId, ScienceAndArt scienceAndArt, Pageable pageable);
 
-    //    default Page<EnrollCollegeScoreLine> queryEnrollCollegeScoreLine(Long collegeId, Long provinceId, Long scienceAndArt, Pageable pageable) {
+    //    default Page<EnrollCollegeScoreLine> queryEnrollCollegeScoreLine(Long enrollCollegeEnrollBatchId, Long provinceId, Long scienceAndArt, Pageable pageable) {
 //        //构建条件规格对象
 //        Specification<EnrollCollegeScoreLine> specification = (Specification<EnrollCollegeScoreLine>) (root, criteriaQuery, criteriaBuilder) -> {
 //            List<Predicate> predicates = new ArrayList<>();//条件列表
 //            /** 添加过滤添加 */
 //
-//            if (collegeId != null) {
+//            if (enrollCollegeEnrollBatchId != null) {
 //                Join<EnrollCollegeScoreLine, College> collegeJoin = root.join("college", JoinType.LEFT);
-//                predicates.add(criteriaBuilder.equal(collegeJoin.get("id"), collegeId));
+//                predicates.add(criteriaBuilder.equal(collegeJoin.get("id"), enrollCollegeEnrollBatchId));
 //            }
 //
 //            if (provinceId != null) {
@@ -105,8 +105,15 @@ public interface EnrollCollegeScoreLineRepo extends JpaRepository<EnrollCollegeS
     @Query("from EnrollCollegeScoreLine p where  p.scienceArt = :scienceArt and p.year >= :queryYear and p.enrollCollegeEnrollBatch.id= :enrollCollegeEnrollBatchId order by p.year desc, p.minScore desc")
     List<EnrollCollegeScoreLine> findByyearAndEnrollCollegeEnrollBatch(@Param("scienceArt") ScienceAndArt scienceAndArt, @Param("enrollCollegeEnrollBatchId") Long enrollCollegeEnrollBatchId, @Param("queryYear") Integer queryYear);
 
+    @Query("from EnrollCollegeScoreLine p where  p.scienceArt = :scienceArt and p.year >= :queryYear and p.enrollCollege.id= :enrollCollegeId order by p.year desc, p.minScore desc")
+    List<EnrollCollegeScoreLine> findByYearAndEnrollCollege(@Param("scienceArt") ScienceAndArt scienceAndArt, @Param("enrollCollegeId") Long enrollCollegeId, @Param("queryYear") Integer queryYear);
 
-    @Query(value = "select * from enroll_college_score_line where enroll_college_enroll_batch_id = ?1 and science_art = ?2 ",nativeQuery = true)
+
+    @Query(value = "select * from enroll_college_score_line where enroll_college_id = ?1 and science_art = ?2 ",nativeQuery = true)
     List<EnrollCollegeScoreLine> findByEnrollCollegeEnrollBatchAndScienceArt(Long enrollCollegeEnrollBatchId, Integer scienceAndArt);
 
+    @Query(value =
+    "from EnrollCollegeScoreLine as a where a.enrollCollegeEnrollBatch.id = ?1 and a.province.id = ?2 and a.scienceArt = ?3"
+    )
+    List<EnrollCollegeScoreLine> findByEnrollCollegeEnrollBatchAndProvinceAndScienceArt(Long enrollCollegeEnrollBatchId,Long provinceId, ScienceAndArt scienceAndArt);
 }

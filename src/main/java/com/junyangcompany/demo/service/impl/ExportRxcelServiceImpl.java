@@ -3,13 +3,11 @@ package com.junyangcompany.demo.service.impl;
 import com.junyangcompany.demo.bean.response.Response;
 import com.junyangcompany.demo.entity.EnrollCollege;
 import com.junyangcompany.demo.entity.EnrollCollegeScoreLine;
-import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import com.junyangcompany.demo.repository.EnrollCollegeRepo;
 import com.junyangcompany.demo.repository.EnrollCollegeScoreLineRepo;
 import com.junyangcompany.demo.repository.ExamineeRepo;
 import com.junyangcompany.demo.service.ExportRxcelService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
@@ -99,7 +97,12 @@ public class ExportRxcelServiceImpl implements ExportRxcelService {
             Optional<EnrollCollege> enrollCollege = responses.stream().map(Response::getEnrollCollege).findFirst();
             if (enrollCollege.isPresent()) {
                 EnrollCollege enrollCollege1 = enrollCollege.get();
-                String enrollCollegeContent = enrollCollege1.getName() + ";" + enrollCollege1.getCode() + ";"+ enrollCollege1.getProvince().getName() + ";"+ enrollCollege1.getCity() + ";"+enrollCollege1.getGrade().getName();
+                String enrollCollegeContent;
+                if (Objects.nonNull(enrollCollege1.getGrade()) && Objects.nonNull(enrollCollege1.getGrade().getName())) {
+                    enrollCollegeContent = enrollCollege1.getName() + ";" + enrollCollege1.getCode() + ";" + enrollCollege1.getProvince().getName() + ";" + enrollCollege1.getCity() + ";" + enrollCollege1.getGrade().getName();
+                } else {
+                    enrollCollegeContent = enrollCollege1.getName() + ";" + enrollCollege1.getCode() + ";" + enrollCollege1.getProvince().getName() + ";" + enrollCollege1.getCity() + ";";
+                }
 //                        + enrollCollege1.getCollegeLevel().stream().toString() + enrollCollege1.getIsPublic() ;
                 HSSFCell cell1 = row2.createCell(0);
                 HSSFCell cell2 = row2.createCell(1);
@@ -107,9 +110,9 @@ public class ExportRxcelServiceImpl implements ExportRxcelService {
                 cell2.setCellValue(enrollCollege1.getPlanCount());
                 row2.createCell(2).setCellValue("人数");
                 //设置格式
-                CellUtil.setAlignment(cell1,HorizontalAlignment.CENTER);
+                CellUtil.setAlignment(cell1, HorizontalAlignment.CENTER);
                 CellUtil.setVerticalAlignment(cell1, VerticalAlignment.CENTER);
-                CellUtil.setAlignment(cell2,HorizontalAlignment.CENTER);
+                CellUtil.setAlignment(cell2, HorizontalAlignment.CENTER);
                 CellUtil.setVerticalAlignment(cell2, VerticalAlignment.CENTER);
 
                 HSSFRow row3 = sheet.createRow(2);
@@ -122,7 +125,7 @@ public class ExportRxcelServiceImpl implements ExportRxcelService {
                 AtomicReference<Long> enrollCollegeEnrollBatchId = new AtomicReference<>(0L);
                 Optional<Response> first = responses.stream().filter(response1 -> response1.getEnrollCollege().getName().equals(collegeName)).findFirst();
                 first.ifPresent(f -> {
-                    enrollCollegeEnrollBatchId.set(f.getSecondBean().getEnrollCollegeEnrollBatch());
+                    enrollCollegeEnrollBatchId.set(f.getSecondBean().getEnrollCollegeId());
                 });
                 //重新查询的大学招生计划里面的当前大学的多年分数线
                 List<EnrollCollegeScoreLine> enrollCollegeScoreLines = enrollCollegeScoreLineRepo.findByEnrollCollegeEnrollBatchAndScienceArt(enrollCollegeEnrollBatchId.get(), scienceAndArt);
@@ -174,20 +177,20 @@ public class ExportRxcelServiceImpl implements ExportRxcelService {
                     // TODO:专业具体信息
                     String majorContent = majorName;
                     //第七行 专业名称,人数
-                    HSSFRow row7 = sheet.createRow(6 +i);
+                    HSSFRow row7 = sheet.createRow(6 + i);
                     //第八行最低分
-                    HSSFRow row8 = sheet.createRow(7 +i);
+                    HSSFRow row8 = sheet.createRow(7 + i);
                     //第九行线差
-                    HSSFRow row9 = sheet.createRow(8 +i);
+                    HSSFRow row9 = sheet.createRow(8 + i);
                     //第十行位次
-                    HSSFRow row10 = sheet.createRow(9 +i);
+                    HSSFRow row10 = sheet.createRow(9 + i);
                     //十一行分差
-                    HSSFRow row11 = sheet.createRow(10 +i);
+                    HSSFRow row11 = sheet.createRow(10 + i);
                     sheet.addMergedRegion(new CellRangeAddress(6 + i, 10 + i, 0, 0));
                     sheet.addMergedRegion(new CellRangeAddress(6 + i, 10 + i, 1, 1));
                     HSSFCell majorContentCell = row7.createCell(0);
                     majorContentCell.setCellValue(majorContent);
-                    CellUtil.setAlignment(majorContentCell,HorizontalAlignment.CENTER);
+                    CellUtil.setAlignment(majorContentCell, HorizontalAlignment.CENTER);
                     CellUtil.setVerticalAlignment(majorContentCell, VerticalAlignment.CENTER);
                     //合并专业名称 2018年专业计划
                     //循环单个scoreInformation,写入不同年份的分数线
@@ -206,22 +209,19 @@ public class ExportRxcelServiceImpl implements ExportRxcelService {
                             row9.createCell(3).setCellValue((Integer) map.get("scoreLineDiff"));
                             row10.createCell(3).setCellValue((Integer) map.get("minRank"));
 //                            row11.createCell(3).setCellValue((Integer) map.get("分差"));
-                        }
-                        else if (map.get("year").equals(2017)) {
+                        } else if (map.get("year").equals(2017)) {
                             row7.createCell(4).setCellValue((Integer) map.get("enrollCount"));
                             row8.createCell(4).setCellValue((Integer) map.get("minScore"));
                             row9.createCell(4).setCellValue((Integer) map.get("scoreLineDiff"));
                             row10.createCell(4).setCellValue((Integer) map.get("minRank"));
 //                            row11.createCell(4).setCellValue((Integer) map.get("分差"));
-                        }
-                        else if (map.get("year").equals(2016)) {
+                        } else if (map.get("year").equals(2016)) {
                             row7.createCell(5).setCellValue((Integer) map.get("enrollCount"));
                             row8.createCell(5).setCellValue((Integer) map.get("minScore"));
                             row9.createCell(5).setCellValue((Integer) map.get("scoreLineDiff"));
                             row10.createCell(5).setCellValue((Integer) map.get("minRank"));
 //                            row11.createCell(5).setCellValue((Integer) map.get("分差"));
-                        }
-                        else if (map.get("year").equals(2015)) {
+                        } else if (map.get("year").equals(2015)) {
                             row7.createCell(6).setCellValue((Integer) map.get("enrollCount"));
                             row8.createCell(6).setCellValue((Integer) map.get("minScore"));
                             row9.createCell(6).setCellValue((Integer) map.get("scoreLineDiff"));
