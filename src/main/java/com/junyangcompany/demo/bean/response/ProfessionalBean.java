@@ -56,6 +56,8 @@ public class ProfessionalBean {
 
     private Integer minProbability;
 
+    private List<String> types;
+
     private String type;
 
     private Integer rank;

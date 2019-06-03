@@ -5,10 +5,7 @@ import com.junyangcompany.demo.bean.request.FirstChoice;
 import com.junyangcompany.demo.bean.response.CollegeLine1;
 import com.junyangcompany.demo.bean.response.ProfessionalBean;
 import com.junyangcompany.demo.bean.response.SecondChoiceBean;
-import com.junyangcompany.demo.entity.EnrollBatch;
-import com.junyangcompany.demo.entity.EnrollCollege;
-import com.junyangcompany.demo.entity.EnrollCollegeScoreLine;
-import com.junyangcompany.demo.entity.EnrollGuide;
+import com.junyangcompany.demo.entity.*;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import com.junyangcompany.demo.entity.professerEntity.CollegeLine;
 import com.junyangcompany.demo.entity.professerEntity.Examinee;
@@ -83,9 +80,11 @@ public class CollegeQueryController {
 
     private final EnrollBatchRepo enrollBatchRepo;
 
+    private final EnrollCollegeRepo enrollCollegeRepo;
+
 
     @Autowired
-    public CollegeQueryController(CollegeProbabilityService collegeProbabilityService, EnrollCollegeEnrollBatchRepo enrollCollegeEnrollBatchRepo, EnrollCollegeScoreLineRepo enrollCollegeScoreLineRepo, EnrollCollegeService enrollCollegeService, EnrollStudentPlanService enrollStudentPlanService, EnrollMajorScoreLineService enrollMajorScoreLineService, professionalBeanService professionalBeanService, ExamineeService examineeService, EnrollBatchService enrollBatchService, CollegeLevelService collegeLevelService, CollegeLineService collegeLineService, SecondChoiceService secondChoiceService, ProfessionalBeanRepo professionalBeanRepo, EnrollGuideService enrollGuideService, SecondChoiceRepo secondChoiceRepo, ExamineeRepo examineeRepo, ProvinceRepo provinceRepo, SecondChoiceEntityRepo secondChoiceEntityRepo, EnrollStudentPlanRepo enrollStudentPlanRepo, EnrollBatchRepo enrollBatchRepo) {
+    public CollegeQueryController(CollegeProbabilityService collegeProbabilityService, EnrollCollegeEnrollBatchRepo enrollCollegeEnrollBatchRepo, EnrollCollegeScoreLineRepo enrollCollegeScoreLineRepo, EnrollCollegeService enrollCollegeService, EnrollStudentPlanService enrollStudentPlanService, EnrollMajorScoreLineService enrollMajorScoreLineService, professionalBeanService professionalBeanService, ExamineeService examineeService, EnrollBatchService enrollBatchService, CollegeLevelService collegeLevelService, CollegeLineService collegeLineService, SecondChoiceService secondChoiceService, ProfessionalBeanRepo professionalBeanRepo, EnrollGuideService enrollGuideService, SecondChoiceRepo secondChoiceRepo, ExamineeRepo examineeRepo, ProvinceRepo provinceRepo, SecondChoiceEntityRepo secondChoiceEntityRepo, EnrollStudentPlanRepo enrollStudentPlanRepo, EnrollBatchRepo enrollBatchRepo, EnrollCollegeRepo enrollCollegeRepo) {
         this.collegeProbabilityService = collegeProbabilityService;
         this.enrollCollegeEnrollBatchRepo = enrollCollegeEnrollBatchRepo;
         this.enrollCollegeScoreLineRepo = enrollCollegeScoreLineRepo;
@@ -106,6 +105,7 @@ public class CollegeQueryController {
         this.secondChoiceEntityRepo = secondChoiceEntityRepo;
         this.enrollStudentPlanRepo = enrollStudentPlanRepo;
         this.enrollBatchRepo = enrollBatchRepo;
+        this.enrollCollegeRepo = enrollCollegeRepo;
     }
 
     /**
@@ -119,6 +119,62 @@ public class CollegeQueryController {
         return professionalBeans_static.stream().filter(professionalBean ->
                 professionalBean.getCollegeName().contains(professionalEntity_.getCollegeName())
         ).collect(Collectors.toList());
+    }
+
+    @GetMapping(
+            value = "/professionCollege",
+            params = "any=true"
+    )
+//    public Page<List<ProfessionalEntity>> professionCollege(@RequestBody ProfessionalEntity collegeCondition, Pageable pageable) {
+    public Page<FirstChoice> professionCollege(String enrollCollegeName,Long examineeId,Pageable pageable){
+        Optional<Examinee> byId = examineeRepo.findById(examineeId);
+        if (!byId.isPresent()){
+            throw new RuntimeException("考生id不存在");
+        }
+        Long provinceId = byId.get().getProvinceId();
+        ScienceAndArt scienceAndArt = byId.get().getScienceAndArt();
+        Long weiCi = byId.get().getWeiCi();
+        List<Long> enrollCollegeEnrollBatchIds = enrollCollegeEnrollBatchRepo.findIdByEnrollCollegeName1(enrollCollegeName, provinceId);
+        List<FirstChoice> firstChoices = new ArrayList<>();
+        for (Long enrollCollegeEnrollBatchId : enrollCollegeEnrollBatchIds) {
+            FirstChoice firstChoice = new FirstChoice();
+            firstChoices.add(firstChoice);
+            List<EnrollCollegeScoreLine> enrollCollegeScoreLines = enrollCollegeScoreLineRepo.findByEnrollCollegeEnrollBatchAndProvinceAndScienceArt(enrollCollegeEnrollBatchId, provinceId, scienceAndArt);
+            List<com.junyangcompany.demo.bean.response.CollegeLine> CollegeLines = new ArrayList<>();
+            firstChoice.setCollegeLines(CollegeLines);
+            for (EnrollCollegeScoreLine enrollCollegeScoreLine : enrollCollegeScoreLines) {
+                com.junyangcompany.demo.bean.response.CollegeLine collegeLine = com.junyangcompany.demo.bean.response.CollegeLine.builder().batchName(enrollCollegeScoreLine.getEnrollBatch().getName())
+                        .enrollCount(enrollCollegeScoreLine.getEnrollCount())
+                        .minRank(enrollCollegeScoreLine.getMinRank())
+                        .minScore(enrollCollegeScoreLine.getMinScore())
+                        .year(enrollCollegeScoreLine.getYear()).build();
+                CollegeLines.add(collegeLine);
+            }
+            Optional<EnrollCollegeEnrollBatch> enrollCollegeEnrollBatchOptional = enrollCollegeEnrollBatchRepo.findById(enrollCollegeEnrollBatchId);
+            if (enrollCollegeEnrollBatchOptional.isPresent()) {
+                EnrollCollegeEnrollBatch enrollCollegeEnrollBatch = enrollCollegeEnrollBatchOptional.get();
+                Optional<EnrollCollege> enrollCollegeOptional = enrollCollegeRepo.findById(enrollCollegeEnrollBatch.getEnrollCollege().getId());
+                if (enrollCollegeOptional.isPresent()) {
+                    EnrollCollege enrollCollege = enrollCollegeOptional.get();
+                    firstChoice.setCollegeProvince(enrollCollege.getProvince().getName());
+                    firstChoice.setCity(enrollCollege.getCity());
+                    firstChoice.setCollegeName(enrollCollege.getName());
+//                    firstChoice.setProbability(collegeProbability.getProbalility());
+                    String batchName = enrollCollegeEnrollBatch.getEnrollBatch().getName();
+//                    String batchName = enrollBatchRepo.findById(collegeProbability.getBatchId()).get().getName();
+                    firstChoice.setBatchName(batchName);
+                    List<String> collegeLever = enrollCollege.getCollegeLevel().stream().map(CollegeLevel::getName).collect(Collectors.toList());
+                    firstChoice.setLevels(collegeLever);
+                    firstChoice.setCollegeCode(enrollCollege.getCode());
+                    if (Objects.nonNull(enrollCollege.getCollegeType()) && Objects.nonNull(enrollCollege.getCollegeType().getName()))
+                        firstChoice.setType(enrollCollege.getCollegeType().getName());
+                    firstChoice.setRank(enrollCollege.getAppRank());
+                }
+            }
+        }
+        List<FirstChoice> data = pageUtils.getPageSizeDataForRelations(firstChoices, pageable.getPageSize(), pageable.getPageNumber());
+        Page page = new PageImpl(data, pageable, firstChoices.size());
+        return page;
     }
 
     @GetMapping(
@@ -197,13 +253,13 @@ public class CollegeQueryController {
             professionalEntity.setExamineeId(collegeCondition.getExamineeId());
         }
         professionalBeans_static = professionalEntities;
-        if (collegeCondition.getType() != null && !collegeCondition.getType().equals("")) {
+        if (Objects.nonNull(collegeCondition.getTypes() ) && collegeCondition.getTypes().size() != 0) {
             professionalEntities = professionalEntities.stream().filter(professionalBean ->
-                    professionalBean.getType().equals(collegeCondition.getType())
+                    collegeCondition.getTypes().contains(professionalBean.getType())
             ).collect(Collectors.toList());
         }
         // 加一个筛选大学所在省份
-        if (Objects.nonNull(collegeCondition.getProvinceIdForColleges()) && collegeCondition.getProvinceIdForColleges().size() != 0) {
+        if (Objects.nonNull(collegeCondition.getProvinceIdForColleges()) && collegeCondition.getProvinceIdForColleges().size() != 0 ) {
             professionalEntities = professionalEntities.stream().filter(professionalBean ->
                     collegeCondition.getProvinceIdForColleges().contains(professionalBean.getProvinceIdForCollege())
             ).collect(Collectors.toList());

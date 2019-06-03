@@ -1,9 +1,9 @@
 package com.junyangcompany.demo.controller;
 
 import com.junyangcompany.demo.bean.CollegeProbability;
-import com.junyangcompany.demo.bean.EnrollCollegeEnrollBatchAndEnrollCollegeBean;
 import com.junyangcompany.demo.bean.request.FirstChoice;
 import com.junyangcompany.demo.bean.response.CollegeLine;
+import com.junyangcompany.demo.entity.CollegeLevel;
 import com.junyangcompany.demo.entity.EnrollCollege;
 import com.junyangcompany.demo.entity.EnrollCollegeEnrollBatch;
 import com.junyangcompany.demo.entity.EnrollCollegeScoreLine;
@@ -11,7 +11,6 @@ import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import com.junyangcompany.demo.entity.professerEntity.Examinee;
 import com.junyangcompany.demo.repository.*;
 import com.junyangcompany.demo.service.CollegeProbabilityService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -60,14 +60,18 @@ public class OtherCollegeController {
         ScienceAndArt scienceAndArt = byId.get().getScienceAndArt();
         Long weiCi = byId.get().getWeiCi();
         List<Long> enrollCollegeEnrollBatchIds = enrollCollegeEnrollBatchRepo.findIdByEnrollCollegeName1(enrollCollegeName, provinceId);
-        List<CollegeProbability> list = collegeProbabilityService.getList(provinceId, scienceAndArt, weiCi, enrollCollegeEnrollBatchIds, null, true);
+//        List<CollegeProbability> list = collegeProbabilityService.getList(provinceId, scienceAndArt, weiCi, enrollCollegeEnrollBatchIds, null, true);
+//        List<FirstChoice> firstChoices = new ArrayList<>();
+//        list.forEach(collegeProbability -> {
+//            FirstChoice firstChoice = new FirstChoice();
+//            firstChoices.add(firstChoice);
+//            // scoreLine,province,city,collegeName,collegeCode
+//            // collegeLine
+//            Long enrollCollegeEnrollBatchId = collegeProbability.getCollegeId();
         List<FirstChoice> firstChoices = new ArrayList<>();
-        list.forEach(collegeProbability -> {
+        for (Long enrollCollegeEnrollBatchId : enrollCollegeEnrollBatchIds) {
             FirstChoice firstChoice = new FirstChoice();
             firstChoices.add(firstChoice);
-            // scoreLine,province,city,collegeName,collegeCode
-            // collegeLine
-            Long enrollCollegeEnrollBatchId = collegeProbability.getCollegeId();
             List<EnrollCollegeScoreLine> enrollCollegeScoreLines = enrollCollegeScoreLineRepo.findByEnrollCollegeEnrollBatchAndProvinceAndScienceArt(enrollCollegeEnrollBatchId, provinceId, scienceAndArt);
             List<CollegeLine> CollegeLines = new ArrayList<>();
             firstChoice.setCollegeLines(CollegeLines);
@@ -80,27 +84,27 @@ public class OtherCollegeController {
                 CollegeLines.add(collegeLine);
             }
             Optional<EnrollCollegeEnrollBatch> enrollCollegeEnrollBatchOptional = enrollCollegeEnrollBatchRepo.findById(enrollCollegeEnrollBatchId);
-            if (enrollCollegeEnrollBatchOptional.isPresent()){
+            if (enrollCollegeEnrollBatchOptional.isPresent()) {
                 EnrollCollegeEnrollBatch enrollCollegeEnrollBatch = enrollCollegeEnrollBatchOptional.get();
                 Optional<EnrollCollege> enrollCollegeOptional = enrollCollegeRepo.findById(enrollCollegeEnrollBatch.getEnrollCollege().getId());
-                if (enrollCollegeOptional.isPresent()){
+                if (enrollCollegeOptional.isPresent()) {
                     EnrollCollege enrollCollege = enrollCollegeOptional.get();
                     firstChoice.setCollegeProvince(enrollCollege.getProvince().getName());
                     firstChoice.setCity(enrollCollege.getCity());
                     firstChoice.setCollegeName(enrollCollege.getName());
-                    firstChoice.setProbability(collegeProbability.getProbalility());
-                    String batchName = enrollBatchRepo.findById(collegeProbability.getBatchId()).get().getName();
+//                    firstChoice.setProbability(collegeProbability.getProbalility());
+                    String batchName = enrollCollegeEnrollBatch.getEnrollBatch().getName();
+//                    String batchName = enrollBatchRepo.findById(collegeProbability.getBatchId()).get().getName();
                     firstChoice.setBatchName(batchName);
+                    List<String> collegeLever = enrollCollege.getCollegeLevel().stream().map(CollegeLevel::getName).collect(Collectors.toList());
+                    firstChoice.setLevels(collegeLever);
                     firstChoice.setCollegeCode(enrollCollege.getCode());
-//                    firstChoice.setType(enrollCollege.getCollegeType().getName());
+                    if (Objects.nonNull(enrollCollege.getCollegeType()) && Objects.nonNull(enrollCollege.getCollegeType().getName()))
+                    firstChoice.setType(enrollCollege.getCollegeType().getName());
                     firstChoice.setRank(enrollCollege.getAppRank());
                 }
             }
-
-//            firstChoice.setCity();
-//            firstChoice.setCollegeProvince();
-        });
+        }
         return firstChoices;
     }
-
 }

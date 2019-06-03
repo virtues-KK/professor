@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * Date:2019/5/13
  * Time:10:29
  */
-//@Component
+@Component
 public class PrepareCollegeData implements CommandLineRunner {
 
     public static Map<Long, ProfessionalBean> enrollCollegeEnrollBatchMap = null;
