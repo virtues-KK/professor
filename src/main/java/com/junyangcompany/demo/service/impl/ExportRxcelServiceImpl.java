@@ -94,7 +94,8 @@ public class ExportRxcelServiceImpl implements ExportRxcelService {
             HSSFRow row2 = sheet.createRow(1);
             // 合并单元格,插入大学招生计划
             sheet.addMergedRegion(new CellRangeAddress(1, 4, 1, 1));
-            Optional<EnrollCollege> enrollCollege = responses.stream().map(Response::getEnrollCollege).findFirst();
+//            Optional<EnrollCollege> enrollCollege = responses.stream().map(Response::getEnrollCollege).findFirst();
+            Optional<EnrollCollege> enrollCollege = responses.stream().map(Response::getEnrollCollege).collect(Collectors.toList()).stream().filter(enrollCollege1 -> enrollCollege1.getName().equals(collegeName)).findFirst();
             if (enrollCollege.isPresent()) {
                 EnrollCollege enrollCollege1 = enrollCollege.get();
                 String enrollCollegeContent;

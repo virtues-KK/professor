@@ -1,4 +1,5 @@
 package com.junyangcompany.demo.entity.enumeration;
+import java.io.Serializable;
 
 /**
  * 文理科
@@ -6,7 +7,7 @@ package com.junyangcompany.demo.entity.enumeration;
  * @author zxy
  * @date 2018-09-11 16:57
  */
-public enum ScienceAndArt {
+public enum ScienceAndArt implements Serializable {
 
     /**
      * 理
@@ -16,5 +17,4 @@ public enum ScienceAndArt {
      * 文
      */
     文科;
-
 }

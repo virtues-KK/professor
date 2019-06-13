@@ -1,18 +1,10 @@
 package com.junyangcompany.demo.bean.response;
 
-import com.junyangcompany.demo.entity.CollegeLevel;
-import com.junyangcompany.demo.entity.EnrollBatch;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
-import com.junyangcompany.demo.entity.professerEntity.CollegeLine;
-import com.junyangcompany.demo.entity.professerEntity.Examinee;
-import com.junyangcompany.demo.entity.professerEntity.PlanLine;
-import com.junyangcompany.demo.entity.professerEntity.QueryEnrollCollegeMajorBean_demo;
 import lombok.*;
-import org.springframework.lang.NonNull;
 
-import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,7 +14,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProfessionalBean {
+public class ProfessionalBean implements Serializable {
 
     private Long enrollCollegeEnrollBatch;
 
@@ -75,14 +67,11 @@ public class ProfessionalBean {
      */
     private String keyword;
 
-//    private List<PlanLine> planLInes;
-
-//    private List<QueryEnrollCollegeMajorBean_demo> secondChoices;
-
     /**
      * 考生信息
      */
     private Long examineeId;
+
 }
 
 

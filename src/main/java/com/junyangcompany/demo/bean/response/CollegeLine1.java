@@ -1,8 +1,9 @@
 package com.junyangcompany.demo.bean.response;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * author:pan le
@@ -12,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class CollegeLine1 {
+public class CollegeLine1 implements Serializable {
         public Integer minScore;
         public Integer minRank;
         public Integer enrollCount;

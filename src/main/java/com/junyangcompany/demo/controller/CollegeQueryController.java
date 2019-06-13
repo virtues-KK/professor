@@ -306,7 +306,10 @@ public class CollegeQueryController {
         List<FirstChoice> firstChoices = new ArrayList<>();
         professionalEntities.forEach(professionalBean -> {
             FirstChoice firstChoice = new FirstChoice();
-            String provinceName = provinceRepo.findById(professionalBean.getProvinceIdForCollege()).get().getName();
+            String provinceName = "北京";
+            if (Objects.nonNull(professionalBean.getProvinceIdForColleges())){
+                provinceName = provinceRepo.findById(professionalBean.getProvinceIdForCollege()).get().getName();
+            }
             firstChoice.setCollegeProvince(provinceName);
             firstChoice.setCity(professionalBean.getCity());
             List<com.junyangcompany.demo.bean.response.CollegeLine> collegeLines = new ArrayList<>();

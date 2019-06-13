@@ -114,7 +114,7 @@ public class AuthService {
                 "</head>" +
                 "<body>" +
                 "   <h1>这是一封激活邮件,激活请点击以下链接</h1>" +
-                "       <a href='http://192.168.1.40:8099/auth/emailCheck/" + gbk + "' >点开风趣幽默,帅气逼人的我~钟孝漪</a>" +
+                "       <a href='http://39.104.123.45:8207/auth/emailCheck/" + gbk + "' >点开风趣幽默,帅气逼人的我~钟孝漪</a>" +
                 "</body>" +
                 "</html>";
         email email = com.junyangcompany.demo.security.mapping.email.builder()

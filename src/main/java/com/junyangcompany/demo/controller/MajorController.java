@@ -4,7 +4,6 @@ import com.junyangcompany.demo.bean.request.SecondBean;
 import com.junyangcompany.demo.bean.response.Response;
 import com.junyangcompany.demo.bean.response.SecondMajors;
 import com.junyangcompany.demo.entity.*;
-import com.junyangcompany.demo.entity.enumeration.Grade;
 import com.junyangcompany.demo.entity.enumeration.ScienceAndArt;
 import com.junyangcompany.demo.entity.professerEntity.Examinee;
 import com.junyangcompany.demo.entity.professerEntity.ProfessionalEntity;
@@ -108,8 +107,7 @@ public class MajorController {
 //            List<Response> data = pageUtils.getPageSizeDataForRelations(list, pageable.getPageSize(), pageable.getPageNumber());
 //            Page<List<Response>> page = new PageImpl(data, pageable, list.size());
 //            return page;
-        }
-        else {
+        } else {
             for (SecondMajors major : majorScoreLine) {
                 Long majorEnrollStudenrPlanId = major.getEnrollStudentPlan().getId();
                 if (Objects.nonNull(major.getEnrollStudentPlan()) && !majorEnrollStudenrPlanId.equals(enrollStudentPlanId)) {
@@ -190,27 +188,31 @@ public class MajorController {
         for (SecondChoiceEntity entity : secondChoiceEntities) {
             List<SecondMajors> majorOption = enrollMajorScoreLineRepo.getMajorOption(entity.getEnrollCollegeEnrollBatch(), scienceAndArt);
             // get from enrollStudentPlan
-            if (majorOption.size() == 0){
+            if (majorOption.size() == 0) {
                 Optional<EnrollStudentPlan> enrollStudentPlanOptional = enrollStudentPlanRepo.findById(entity.getEnrollStudentPlanId());
                 EnrollStudentPlan enrollStudentPlan = enrollStudentPlanOptional.orElse(null);
-                    // 代表没有专业分数线,显示专业名称即可
-                    List<Map<String, Object>> list1 = new ArrayList<>();
-                    Map<String, Object> map = new HashMap<>();
-                    //get professionalEntity
+                Long enrollCollegeId = null;
+                if (Objects.nonNull(enrollStudentPlan)) {
+                    enrollCollegeId = enrollStudentPlan.getEnrollCollege().getId();
+                }
+                // 代表没有专业分数线,显示专业名称即可
+                List<Map<String, Object>> list1 = new ArrayList<>();
+                Map<String, Object> map = new HashMap<>();
+                //get professionalEntity
                 Long professionEntityBeanId = professionalBeanRepo.findIdByExamineeIdAndEnrollCollegeEnrollBatch(examineeId, entity.getEnrollCollegeEnrollBatch());
                 SecondBean secondBean = SecondBean.builder().enrollCollegeEnrollBatch(entity.getEnrollCollegeEnrollBatch())
-                            .enrollCollegeId(enrollStudentPlan.getEnrollCollege().getId())
-                            .enrollStudentPlanId(enrollStudentPlan.getId())
-                            .examineeId(examineeId)
-                            .professionalEntityId(professionEntityBeanId)
-                            .enrollMajorScoreLineId(entity.getEnrollMajorScoreLineId())
-                            .build();
-                    map.put("year", enrollStudentPlan.getYear());
-                    map.put("yearOfStudy", enrollStudentPlan.getYearOfStudy());
-                    map.put("enrollCount", enrollStudentPlan.getPlanCount());
-                    list1.add(map);
-                    Response response = Response.builder().scienceAndArt(scienceAndArt).name(enrollStudentPlan.getName()).scoreInformation(list1).secondBean(secondBean).enrollMajorScoreLine_id(entity.getEnrollMajorScoreLineId()).build();
-                    list.add(response);
+                        .enrollCollegeId(enrollCollegeId)
+                        .enrollStudentPlanId(enrollStudentPlan.getId())
+                        .examineeId(examineeId)
+                        .professionalEntityId(professionEntityBeanId)
+                        .enrollMajorScoreLineId(entity.getEnrollMajorScoreLineId())
+                        .build();
+                map.put("year", enrollStudentPlan.getYear());
+                map.put("yearOfStudy", enrollStudentPlan.getYearOfStudy());
+                map.put("enrollCount", enrollStudentPlan.getPlanCount());
+                list1.add(map);
+                Response response = Response.builder().scienceAndArt(scienceAndArt).name(enrollStudentPlan.getName()).scoreInformation(list1).secondBean(secondBean).enrollMajorScoreLine_id(entity.getEnrollMajorScoreLineId()).build();
+                list.add(response);
             }
             //get from enrollMajorScoreLine
             else {
@@ -335,18 +337,16 @@ public class MajorController {
 //        return list;
 //    }
 
-    @Autowired
-    private ProvinceRepo provinceRepo;
 
     @GetMapping("exportExcel")
     public void exportExcel(HttpServletResponse httpServletResponse, Long examineeId) throws IOException {
-        List<Response> responses = this.searchSecondChoiceByExaminee(examineeId);
+        List<Response> responses = this.searchSecondChoiceByExaminee(examineeId).stream().distinct().collect(Collectors.toList());
         //为没有大学分数线的数据添加上大学名称
         for (Response respons : responses) {
-            if (Objects.isNull(respons.getEnrollCollege())){
+            if (Objects.isNull(respons.getEnrollCollege())) {
                 Long professionalEntityId = respons.getSecondBean().getProfessionalEntityId();
                 Optional<ProfessionalEntity> professionalEntityOptional = professionalBeanRepo.findById(professionalEntityId);
-                if (professionalEntityOptional.isPresent()){
+                if (professionalEntityOptional.isPresent()) {
                     ProfessionalEntity professionalEntity = professionalEntityOptional.get();
                     respons.setEnrollCollege(EnrollCollege.builder()
                             .name(professionalEntity.getCollegeName())
@@ -355,7 +355,7 @@ public class MajorController {
                             .planCount(-999)
                             .code(professionalEntity.getCollegeCode()).build());
                     Map<String, Object> map = respons.getScoreInformation().get(0);
-                    map.put("minScore","未知");
+                    map.put("minScore", "未知");
                     map.put("majorName", respons.getName());
                     map.put("enrollMajorScoreLinId", -999L);
                     map.put("price", -999);
@@ -364,7 +364,6 @@ public class MajorController {
                     map.put("averageScore", -999);
                     map.put("scoreLineDiff", -999);
                     respons.getScoreInformation().add(map);
-
                 }
             }
         }

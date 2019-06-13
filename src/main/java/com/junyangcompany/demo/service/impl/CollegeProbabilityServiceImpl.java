@@ -68,7 +68,6 @@ public class CollegeProbabilityServiceImpl implements CollegeProbabilityService 
         if(seq == null)
             return collegeProbabilities;
 
-
         if(seq == 1) {
             List<PassProbabilityMetadata> patched = passProbabilityMetadataRepo.findByProvinceAndSAAndBatch(provienceId,scienceAndArt,1001l,seq.intValue());
             for(PassProbabilityMetadata passProbabilityMetadata : patched)
